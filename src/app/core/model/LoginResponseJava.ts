@@ -1,12 +1,13 @@
 export type EstadoUsuario = 'ACTIVO' | 'INACTIVO' | 'DESACTIVADO' | 'ELIMINADO';
 
-export default interface User {
+
+export default interface LoginResponseJava {
+  token: string,
   id: number,
-  nombre: string, 
+  nombre: string,
   apellido: string,
   email: string,
-  password?: string,
-  tipoUser: string,
+  tipoDeUsuario: string,
   fotoPerfil?: string,
   estado: EstadoUsuario
 }
