@@ -1,1 +1,65 @@
-<p>user-login works!</p>
+<div id="loginContenedor" class="card shadow-lg animate__animated animate__backInUp">
+
+    <div class="card-body"> 
+        <h2 class="card-title text-center text-dark mb-4">Iniciar Sesión</h2> 
+
+        <form [formGroup]="loginForm" (submit)="onSubmit()">
+
+            <div id="formContenedor" class="mb-4"> 
+
+                <div class="mb-3">
+                    <input 
+                        type="email" 
+                        id="email" 
+                        formControlName="email" 
+                        placeholder="ejemplo@correo.com"
+                        class="form-control form-control-lg"> 
+
+                    @if (loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)) {
+                        <div class="text-danger mt-1 small">
+                            @if (loginForm.get('email')?.hasError('required')) {
+                                <span>El email es obligatorio</span>
+                            }
+                            @if (loginForm.get('email')?.hasError('email')) {
+                                <span>El email debe ser en un formato válido</span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        formControlName="password" 
+                        placeholder="Contraseña"
+                        class="form-control form-control-lg">
+
+                    @if (loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)) {
+                        <div class="text-danger mt-1 small">
+                            @if (loginForm.get('password')?.hasError('required')) {
+                                <span>La contraseña es obligatoria.</span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                @if (mensajeError) {
+                    <p class="alert alert-danger text-center">{{mensajeError}}</p> 
+                }
+            </div>
+
+            <button 
+                type="submit" 
+                [disabled]="loginForm.invalid"
+                class="btn btn-primary btn-lg w-100 mb-3"> 
+                Acceder
+            </button>
+        </form>
+    </div>
+
+    <div id="RedirectContenedor" class="card-footer text-center bg-light">
+        <p class="mb-0 text-muted">¿No tenés cuenta? <a routerLink="/auth/registrarse" class="text-decoration-none">Registrate aquí</a></p>
+    </div>
+
+</div>
