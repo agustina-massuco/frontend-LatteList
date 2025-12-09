@@ -1,1 +1,29 @@
-<p>header works!</p>
+<header>
+    <nav>
+        <h1>LatteList </h1>
+
+        <div class="navLinks">
+            @if (!authSer.isLoggedIn()) {
+                <a routerLink="/auth/login">Iniciar sesion</a>
+                <a routerLink="auth/registrarse"> Crear cuenta</a>
+             } @else { 
+
+                <a routerLink="/cafes">Cafes</a>
+                <a routerLink="/auth/perfil">Mi perfil</a> 
+                
+                @if (authSer.isAdmin())  { 
+                    <a routerLink="/admin/listado">Usuarios</a>
+                    <a routerLink="/admin/registrarAdmin">Crear Admin</a>
+               
+                } @else { <!-- Esta logueado y es cliente -->
+                      <a routerLink="/lista">Mis listas</a>
+                }
+
+                <button (click)="onLogout()"> Cerrar sesion</button>
+        }
+
+
+        </div>
+    </nav>
+
+</header>
