@@ -1,0 +1,13 @@
+<span class="pill" [ngClass]="{
+  'pill-tag': variant === 'tag',
+  'pill-badge': variant === 'badge',
+  'pill-open': variant === 'badge' && type === 'open',
+  'pill-closed': variant === 'badge' && type === 'closed',
+  'pill-info': variant === 'badge' && type === 'info',
+  'pill-default': variant === 'badge' && type === 'default'
+}">
+  @if (icon) {
+    <span class="pill-icon">{{ icon }}</span>
+  }
+  <span class="pill-text">{{ text }}</span>
+</span>

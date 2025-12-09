@@ -1,1 +1,24 @@
-<p>list-item works!</p>
+<div class="list-item" [class.inactive-item]="item.inactive" (click)="onItemClick()">
+  @if (item.image !== undefined) {
+  <div class="list-item-image" [class.no-image]="!item.image">
+    @if (item.image) {
+    <img [src]="item.image" [alt]="item.title" />
+    } @else {
+    <div class="placeholder-content">
+      <span class="placeholder-letter">{{ item.title.charAt(0) }}</span>
+    </div>
+    }
+  </div>
+  }
+  <div class="list-item-content">
+    <h3 class="list-item-title">{{ item.title }}</h3>
+    <p class="list-item-description">{{ item.description }}</p>
+  </div>
+  @if (item.action) {
+  <div class="list-item-action">
+    <button class="action-button" (click)="onActionClick($event)">
+      <span [innerHTML]="safeAction"></span>
+    </button>
+  </div>
+  }
+</div>

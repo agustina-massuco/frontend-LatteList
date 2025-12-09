@@ -1,1 +1,45 @@
-<p>footer works!</p>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-columns">
+      @for (column of columns; track column.title) {
+        <div class="footer-column">
+          <h3 class="column-title">{{ column.title }}</h3>
+          <ul class="column-list">
+            @for (item of column.items; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    @if (socialLinks.length > 0) {
+      <div class="footer-column social-column">
+        <h3 class="column-title">SÍGUENOS EN REDES</h3>
+        <div class="social-icons">
+          @for (social of socialLinks; track social.url) {
+            <a 
+              [href]="social.url" 
+              target="_blank"
+              [attr.aria-label]="social.name"
+              class="social-icon">
+              {{ social.icon }}
+            </a>
+          }
+        </div>
+      </div>
+    }
+
+    @if (contactInfo) {
+      <div class="footer-column contact-column">
+        <h3 class="column-title">CONTACTANOS</h3>
+        <div class="contact-info">
+          <p class="contact-company">{{ contactInfo.company }}</p>
+          <p class="contact-address">{{ contactInfo.address }}</p>
+          <p class="contact-phone">Tel: {{ contactInfo.phone }}</p>
+          <p class="contact-email">Mail: {{ contactInfo.email }}</p>
+        </div>
+      </div>
+    }
+  </div>
+</footer>

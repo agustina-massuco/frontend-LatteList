@@ -1,0 +1,101 @@
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 44px;
+  border-radius: 22px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dbdbdb;
+  padding: 0 16px;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.search-container:focus-within {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #79462d;
+}
+
+.search-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8e8e8e;
+  flex-shrink: 0;
+}
+
+.search-icon svg {
+  display: block;
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.search-input::placeholder {
+  color: #8e8e8e;
+}
+
+.clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #8e8e8e;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #262626;
+}
+
+.clear-btn:active {
+  transform: scale(0.95);
+}
+
+.clear-btn svg {
+  display: block;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .search-container {
+    height: 40px;
+  }
+
+  .search-input {
+    font-size: 13px;
+  }
+
+  .search-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .search-container {
+    height: 38px;
+    padding: 0 12px;
+  }
+
+  .search-input {
+    font-size: 12px;
+  }
+}

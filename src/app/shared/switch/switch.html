@@ -1,1 +1,6 @@
-<p>switch works!</p>
+<div class="switch-container" (click)="toggle()">
+  <span class="switch-label">{{ label }}</span>
+  <div class="switch-toggle" [class.checked]="checked">
+    <div class="switch-slider"></div>
+  </div>
+</div>

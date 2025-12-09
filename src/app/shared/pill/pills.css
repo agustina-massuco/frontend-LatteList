@@ -1,0 +1,89 @@
+/* Base pill styles */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.pill-icon {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  font-size: 0.85em;
+}
+
+.pill-text {
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+/* Tag variant - Destacado con gradiente marrón */
+.pill-tag {
+  background: linear-gradient(135deg, #8b4513 0%, #6d3610 100%);
+  color: white;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  box-shadow: 0 1px 3px rgba(139, 69, 19, 0.25);
+}
+
+.pill-tag:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(139, 69, 19, 0.3);
+}
+
+/* Badge variant - Estilos secundarios más pequeños */
+.pill-badge {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.7rem;
+  border: 1px solid;
+}
+
+/* Badge default - Gris/Azul claro */
+.pill-default {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #bbdefb;
+}
+
+.pill-default:hover {
+  background: #bbdefb;
+}
+
+/* Badge open - Verde */
+.pill-open {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-color: #c8e6c9;
+}
+
+.pill-open:hover {
+  background: #c8e6c9;
+}
+
+/* Badge closed - Rojo */
+.pill-closed {
+  background: #ffebee;
+  color: #c62828;
+  border-color: #ffcdd2;
+}
+
+.pill-closed:hover {
+  background: #ffcdd2;
+}
+
+/* Badge info - Amarillo */
+.pill-info {
+  background: #fffde7;
+  color: #f57f17;
+  border-color: #fff9c4;
+}
+
+.pill-info:hover {
+  background: #fff9c4;
+}

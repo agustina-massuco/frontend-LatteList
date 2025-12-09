@@ -1,1 +1,12 @@
-<p>confirmacion-modal works!</p>
+@if (visible) {
+  <div class="confirm-modal-backdrop" (click)="cerrarOverlay()">
+    <div class="confirm-modal" (click)="$event.stopPropagation()">
+      <h3>{{ titulo }}</h3>
+      <p>{{ mensaje }}</p>
+      <div class="confirm-modal-buttons">
+        <button class="btn-modal-cancelar" (click)="onCancelar()">{{ textoCancelar }}</button>
+        <button class="btn-modal-confirmar" (click)="onConfirmar()">{{ textoConfirmar }}</button>
+      </div>
+    </div>
+  </div>
+}

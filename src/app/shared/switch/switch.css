@@ -1,0 +1,99 @@
+.switch-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.switch-container:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.switch-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.switch-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #e0e0e0;
+  border-radius: 12px;
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+}
+
+.switch-toggle.checked {
+  background: #79462d;
+}
+
+.switch-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.switch-toggle.checked .switch-slider {
+  transform: translateX(20px);
+}
+
+/* Hover effects */
+.switch-container:hover .switch-toggle {
+  box-shadow: 0 0 0 4px rgba(90, 107, 84, 0.1);
+}
+
+.switch-container:hover .switch-toggle.checked {
+  background: #79462d;
+}
+
+/* Active state */
+.switch-container:active .switch-slider {
+  width: 24px;
+}
+
+.switch-container:active .switch-toggle.checked .switch-slider {
+  transform: translateX(16px);
+}
+
+/* Responsive */
+@media screen and (max-width: 480px) {
+  .switch-container {
+    padding: 6px 8px;
+    gap: 10px;
+  }
+
+  .switch-label {
+    font-size: 13px;
+  }
+
+  .switch-toggle {
+    width: 40px;
+    height: 22px;
+  }
+
+  .switch-slider {
+    width: 18px;
+    height: 18px;
+  }
+
+  .switch-toggle.checked .switch-slider {
+    transform: translateX(18px);
+  }
+
+  .switch-container:active .switch-toggle.checked .switch-slider {
+    transform: translateX(14px);
+  }
+}

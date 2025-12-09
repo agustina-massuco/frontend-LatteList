@@ -1,1 +1,38 @@
-<p>spin-wheel works!</p>
+<div class="spin-wheel-container">
+  <div class="wheel-wrapper">
+    <div class="arrow-indicator"></div>
+
+    <svg
+      class="wheel"
+      [class.spinning]="isSpinning"
+      [style.transform]="'rotate(' + rotation + 'deg)'"
+      viewBox="0 0 300 300"
+      width="300"
+      height="300">
+
+      <circle cx="150" cy="150" r="144" fill="none" stroke="#333" stroke-width="4"/>
+
+      @for (slice of slices; track slice) {
+        <path [attr.d]="getSlicePath(slice)" [attr.fill]="slice.color" stroke="white" stroke-width="2" />
+
+        <text
+          [attr.x]="getTextPosition(slice).x"
+          [attr.y]="getTextPosition(slice).y"
+          [attr.transform]="'rotate(' + getTextPosition(slice).rotation + ' ' + getTextPosition(slice).x + ' ' + getTextPosition(slice).y + ')'"
+          class="slice-text"
+          text-anchor="middle"
+          dominant-baseline="middle">
+          {{ getDisplayText(slice.cafe.nombre) }}
+        </text>
+      }
+
+      <circle cx="150" cy="150" r="20" fill="#333" />
+      <circle cx="150" cy="150" r="15" fill="white" />
+      <circle cx="150" cy="150" r="8" fill="#333" />
+    </svg>
+  </div>
+
+  <button class="spin-button" (click)="spin()" [disabled]="isSpinning || slices.length === 0">
+    {{ isSpinning ? 'Girando...' : 'Girar Ruleta' }}
+  </button>
+</div>

@@ -1,0 +1,151 @@
+.spin-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 32px;
+}
+
+.wheel-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-indicator {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 35px solid #F8F9FA;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+  z-index: 10;
+}
+
+.wheel {
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+  transition: none;
+}
+
+.wheel.spinning {
+  transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.slice-text {
+  font-size: 14px;
+  font-weight: 700;
+  fill: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  user-select: none;
+}
+
+.spin-button {
+    font-family:FuentePersonalCafe;
+  padding: 16px 48px;
+  background:  #996040;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(90, 107, 84, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.spin-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(90, 107, 84, 0.4);
+}
+
+.spin-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.spin-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.selected-result {
+  font-size: 20px;
+  color: #5a6b54;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeInBounce 0.6s ease;
+  padding: 16px 32px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(90, 107, 84, 0.2);
+}
+
+.selected-result strong {
+  color: #4a5b44;
+  font-size: 24px;
+  display: block;
+  margin-top: 4px;
+}
+
+@keyframes fadeInBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  60% {
+    transform: scale(1.1) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Responsive */
+@media screen and (max-width: 480px) {
+  .wheel-wrapper {
+    width: 250px;
+    height: 250px;
+  }
+
+  .wheel {
+    width: 250px;
+    height: 250px;
+  }
+
+  .slice-text {
+    font-size: 11px;
+  }
+
+  .spin-button {
+    padding: 14px 36px;
+    font-size: 16px;
+  }
+
+  .selected-result {
+    font-size: 18px;
+    padding: 14px 24px;
+  }
+
+  .selected-result strong {
+    font-size: 20px;
+  }
+}
+
+@font-face {
+  font-family: 'FuentePersonalCafe'; 
+  src: url('/fonts/Chewy-Regular.ttf') format('truetype');
+  font-weight: normal; 
+  font-style: normal;
+  font-display: swap; 
+}
+

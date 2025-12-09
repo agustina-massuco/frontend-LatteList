@@ -1,1 +1,19 @@
-<p>paginator works!</p>
+<div class="paginator">
+  <button 
+    class="paginator-btn"
+    (click)="onPrevious()" 
+    [disabled]="isFirstPage">
+    ⬅ Anterior
+  </button>
+  
+  <span class="paginator-info">
+    Página {{ currentPage }} / {{ totalPages }}
+  </span>
+  
+  <button 
+    class="paginator-btn"
+    (click)="onNext()" 
+    [disabled]="isLastPage">
+    Siguiente ➡
+  </button>
+</div>

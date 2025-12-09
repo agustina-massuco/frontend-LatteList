@@ -1,0 +1,100 @@
+/* Fondo oscuro con efecto blur */
+.confirm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  z-index: 4000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: aparecerOverlay 0.3s ease forwards;
+}
+
+/* Caja del modal centrada */
+.confirm-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+  border-radius: 1.2rem;
+  padding: 1.8rem 2rem;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  animation: aparecerModal 0.35s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Título */
+.confirm-modal h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #222;
+  font-weight: 600;
+}
+
+/* Texto */
+.confirm-modal p {
+  margin: 1rem 0 1.5rem;
+  color: #444;
+  font-size: 1rem;
+}
+
+/* Botones */
+.confirm-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-modal-cancelar,
+.btn-modal-confirmar {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  min-width: 100px;
+}
+
+.btn-modal-cancelar {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-modal-cancelar:hover {
+  background: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.btn-modal-confirmar {
+  background: #8C4B2E;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(7, 7, 7, 0.3);
+}
+
+.btn-modal-confirmar:hover {
+  background:#502917;
+  transform: scale(1.05);
+}
+
+/* Animaciones */
+@keyframes aparecerOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes aparecerModal {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
