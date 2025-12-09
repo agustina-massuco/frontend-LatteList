@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 
 
-/** Define la estructura de cada columna del footer. */
 interface FooterColumn {
   title: string;
   items: string[];
@@ -38,10 +37,8 @@ export class Footer {
         'Creamos tus listas personalizadas'
       ]
     }
-    // Puedes añadir más objetos de columna aquí
   ];
 
-  /** Datos para la sección de redes sociales (usado con @if (socialLinks.length > 0)) */
   socialLinks: SocialLink[] = [
     { icon: '𝕏', url: 'https://twitter.com', name: 'Twitter' },
     { icon: 'G+', url: 'https://plus.google.com', name: 'Google Plus' },
@@ -50,7 +47,6 @@ export class Footer {
 
   ];
 
-  /** Datos para la sección de contacto (usado con @if (contactInfo)) */
   contactInfo: ContactInfo = {
     company: 'Caffe List',
     address: 'Av. Dorrego 281, Mar del Plata, Buenos Aires, Argentina',
