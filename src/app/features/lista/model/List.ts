@@ -1,5 +1,5 @@
 export default interface List {
-    id: string, 
+    id: number, 
     nombre: string,
     idUser: string,
     idCafes: string[],

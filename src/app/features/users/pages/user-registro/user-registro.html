@@ -1,1 +1,156 @@
-<p>user-registro works!</p>
+<div class="container-form">
+    <h2>
+        @if (mode === 'registro') { Crear cuenta }
+        @else if (mode === 'admin') { Crear usuario administrador }
+        @else { Editar perfil }
+    </h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row g-3">
+
+        <div class="col-md-12"> 
+            <label for="nombre" class="form-label">Nombre</label>
+            <input id="nombre" type="text" formControlName="nombre" class="form-control"
+                [class.is-invalid]="form.get('nombre')?.touched && form.get('nombre')?.invalid"
+                [class.is-valid]="form.get('nombre')?.touched && form.get('nombre')?.valid">
+
+            @if (form.get('nombre')?.touched && form.get('nombre')?.invalid) {
+                <div class="invalid-feedback">
+                    @if (form.get('nombre')?.hasError('required')) { El nombre es obligatorio. }
+                    @if (form.get('nombre')?.hasError('whitespace')) { El nombre no puede ser solo espacios. }
+                    @if (form.get('nombre')?.hasError('minlength') || form.get('nombre')?.hasError('maxlength')) { Debe tener entre 3 y 20 caracteres. }
+                </div>
+            }
+        </div>
+
+        <div class="col-md-12">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input id="apellido" type="text" formControlName="apellido" class="form-control"
+                [class.is-invalid]="form.get('apellido')?.touched && form.get('apellido')?.invalid"
+                [class.is-valid]="form.get('apellido')?.touched && form.get('apellido')?.valid">
+
+            @if (form.get('apellido')?.touched && form.get('apellido')?.invalid) {
+                <div class="invalid-feedback">
+                    @if (form.get('apellido')?.hasError('required')) { El apellido es obligatorio. }
+                    @if (form.get('apellido')?.hasError('whitespace')) { El apellido no puede ser solo espacios. }
+                    @if (form.get('apellido')?.hasError('minlength') || form.get('apellido')?.hasError('maxlength')) { Debe tener entre 3 y 20 caracteres. }
+                </div>
+            }
+        </div>
+
+        <div class="col-md-12">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input id="email" type="email" formControlName="email" autocomplete="new-password" class="form-control"
+                [class.is-invalid]="form.get('email')?.touched && form.get('email')?.invalid"
+                [class.is-valid]="form.get('email')?.touched && form.get('email')?.valid">
+
+            @if (form.get('email')?.touched && form.get('email')?.invalid) {
+                <div class="invalid-feedback">Ingrese un email válido.</div>
+            }
+        </div>
+
+        @if (mode !== 'edit') {
+            <div class="col-md-12">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-group">
+                    <input id="password" 
+                           [type]="mostrarClave ? 'text' : 'password'" 
+                           formControlName="password" 
+                           autocomplete="new-password"
+                           class="form-control"
+                           (paste)="$event.preventDefault()" 
+                           [class.is-invalid]="form.get('password')?.touched && form.get('password')?.invalid">
+
+                    <button type="button" (click)="toggleVisibility('password')" class="btn-cafe-password input-group-text">
+                        @if (mostrarClave) 
+                         { <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                          </svg> } 
+                    @else { 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                        <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588M5.21 3.088A7.029 7.029 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/>
+                        <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a3.5 3.5 0 0 1 2.829 2.828z"/>
+                        <path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12z"/>
+                    </svg>
+                }
+                    </button>
+                </div>
+                
+                @if (form.get('password')?.touched && form.get('password')?.invalid) {
+                    <div class="invalid-feedback d-block">
+                        @if (form.get('password')?.hasError('required')) { La clave es obligatoria. }
+                        @if (form.get('password')?.hasError('minlength')) { Se solicita un mínimo de 8 caracteres. }
+                        @if (form.get('password')?.hasError('noMayuscula')) { Debe tener al menos una Mayúscula. }
+                        @if (form.get('password')?.hasError('noMinuscula')) { Debe contener al menos una minúscula. }
+                        @if (form.get('password')?.hasError('noNumero')) { Debe contener al menos un número. }
+                        @if (form.get('password')?.hasError('noEspecial')) { Debe contener al menos un carácter especial (@$!%*?&). }
+                    </div>
+                }
+            </div>
+
+            <div class="col-md-12">
+                <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                <div class="input-group">
+                    <input id="confirmPassword" 
+                           [type]="mostrarConfirmarClave ? 'text' : 'password'" 
+                           formControlName="confirmPassword" 
+                           autocomplete="new-password"
+                           class="form-control"
+                           (paste)="$event.preventDefault()"
+                           [class.is-invalid]="form.get('confirmPassword')?.touched && form.get('confirmPassword')?.invalid">
+
+                    <button type="button" (click)="toggleVisibility('confirmPassword')" class="btn-cafe-password input-group-text">
+                          @if (mostrarConfirmarClave) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                    </svg>
+                } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                        <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588M5.21 3.088A7.029 7.029 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/>
+                        <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a3.5 3.5 0 0 1 2.829 2.828z"/>
+                        <path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12z"/>
+                    </svg>
+                }
+                   
+                        </button>
+                </div>
+
+                @if (form.get('confirmPassword')?.touched && form.get('confirmPassword')?.hasError('mismatch')) {
+                    <div class="invalid-feedback d-block">La clave no coincide.</div>
+                }
+            </div>
+        }
+
+        <div class="col-md-12">
+            <label for="fotoPerfilInput" class="file-upload-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+        @if (fotoPreview) { Cambiar foto } @else { Añadir foto de perfil }
+            </label>
+            
+            <input type="file" id="fotoPerfilInput" (change)="onFileSelected($event)" accept="image/*" style="display: none;" class="form-control">
+            
+            @if (fotoPreview) {
+                <div class="preview-wrapper mt-3">
+                    <img [src]="fotoPreview" class="preview-img" alt="Foto seleccionada">
+                    <button type="button" class="remove-btn" (click)="quitarFotoPerfil()">×</button>
+                </div>
+            }
+        </div>
+
+        <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-primary btn-custom" [disabled]="form.invalid || (mode === 'edit' && !isFormDirty)">
+                @if (mode === 'registro') { Registrarme }
+                @else if (mode === 'admin') { Crear usuario admin }
+                @else { Guardar cambios }
+            </button>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn-back" (click)="volver()">Volver</button>
+    </div>
+</div>
