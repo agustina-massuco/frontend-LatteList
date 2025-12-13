@@ -22,21 +22,21 @@
                     </li>
                     } @else {
                     <li class="nav-item">
-                        <a class="nav-link" routerLink="/auth/home" routerLinkActive="active">Home</a>
+                        <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" routerLink="/cafes" routerLinkActive="active">Cafés</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" routerLink="/auth/perfil" routerLinkActive="active">Mi perfil</a>
+                        <a class="nav-link" routerLink="/usuarios/perfil" routerLinkActive="active">Mi perfil</a>
                     </li>
 
                     @if (authSer.isAdmin()) {
                     <li class="nav-item">
-                        <a class="nav-link" routerLink="/admin/listado" routerLinkActive="active">Usuarios</a>
+                        <a class="nav-link" routerLink="/usuarios/listado" routerLinkActive="active">Usuarios</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" routerLink="/admin/registrarAdmin" routerLinkActive="active">Crear Admin</a>
+                        <a class="nav-link" routerLink="/usuarios/registrarAdmin" routerLinkActive="active">Crear Admin</a>
                     </li>
                     } @else {
                     <li class="nav-item">

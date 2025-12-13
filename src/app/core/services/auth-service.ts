@@ -125,10 +125,49 @@ export class AuthService {
   }
 
 
-   sesionActiva(): boolean {
-    return this.loggedIn();
+  sesionActiva(): boolean {
+   const token = localStorage.getItem('jwt_token'); 
+
+    if (!token) {
+      console.log('No hay token JWT en localStorage');
+      return false; 
+    }
+
+    if (this.isTokenExpired(token)) {
+      console.log('El token JWT ha expirado');
+      this.logout(); 
+      return false;
+    }
+
+    return true; 
   }
 
+  private isTokenExpired(token: string): boolean {
+    try {
+      const tokenLimpio = token.replace('Bearer ', '');
+
+      const partes = tokenLimpio.split('.');
+      
+      if (partes.length !== 3) {
+        throw new Error('Token mal formado');
+      }
+
+      const payloadBase64 = partes[1];
+      const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+      const payloadJson = atob(base64);
+      
+      const payload = JSON.parse(payloadJson);
+     
+      const expiracion = payload.exp;
+      const ahora = Math.floor(Date.now() / 1000);
+
+      return expiracion < ahora;
+      
+    } catch (e) {
+      console.error('Error verificando expiración:', e);
+      return true;
+    }
+  }
 
   logout(): void {
     const user = this.getUserFromToken(); 
@@ -144,9 +183,13 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
+
+
  forgotPassword(email: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/forgot-password?email=${email}`, {});
   }
+
+
 
   resetPassword(token: string, newPassword: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/reset-password`, { token, newPassword });

@@ -1,5 +1,18 @@
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
+import { inject } from '@angular/core';
 
 export const clienGuard: CanActivateFn = (route, state) => {
-  return true;
+ const authService = inject(AuthService);
+  const router = inject(Router);
+
+  const role = authService.getRoleFromStorage()?.toUpperCase();
+  
+  if (role === 'CLIENTE') {
+    return true; 
+  }
+
+ 
+  router.navigate(['/home']); 
+  return false;
 };
