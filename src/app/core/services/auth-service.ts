@@ -144,6 +144,12 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
- 
+ forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/forgot-password?email=${email}`, {});
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/reset-password`, { token, newPassword });
+  }
 
 }

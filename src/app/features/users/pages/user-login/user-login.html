@@ -3,63 +3,104 @@
     <div class="card-body"> 
         <h2 class="card-title text-center text-dark mb-4">Iniciar Sesión</h2> 
 
-        <form [formGroup]="loginForm" (submit)="onSubmit()">
+       <form [formGroup]="loginForm" (submit)="onSubmit()">
 
-            <div id="formContenedor" class="mb-4"> 
+    <div id="formContenedor" class="mb-4">
 
-                <div class="mb-3">
-                    <input 
-                        type="email" 
-                        id="email" 
-                        formControlName="email" 
-                        placeholder="ejemplo@correo.com"
-                        class="form-control form-control-lg"> 
+        <div class="mb-3">
+            <input 
+                type="email" 
+                id="email" 
+                formControlName="email" 
+                placeholder="ejemplo@correo.com"
+                class="form-control form-control-lg"
+                [class.is-invalid]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
 
-                    @if (loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)) {
-                        <div class="text-danger mt-1 small">
-                            @if (loginForm.get('email')?.hasError('required')) {
-                                <span>El email es obligatorio</span>
-                            }
-                            @if (loginForm.get('email')?.hasError('email')) {
-                                <span>El email debe ser en un formato válido</span>
-                            }
-                        </div>
+            @if (loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)) {
+                <div class="text-danger mt-1 small">
+                    @if (loginForm.get('email')?.hasError('required')) {
+                        <span>El email es obligatorio</span>
+                    }
+                    @if (loginForm.get('email')?.hasError('email')) {
+                        <span>El email debe ser en un formato válido</span>
                     }
                 </div>
+            }
+        </div>
 
-                <div class="mb-3">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        formControlName="password" 
-                        placeholder="Contraseña"
-                        class="form-control form-control-lg">
-
-                    @if (loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)) {
-                        <div class="text-danger mt-1 small">
-                            @if (loginForm.get('password')?.hasError('required')) {
-                                <span>La contraseña es obligatoria.</span>
-                            }
-                        </div>
+        <div class="mb-3">
+            <div class="input-group">
+                <input 
+                    [type]="mostrarClave ? 'text' : 'password'"
+                    id="password" 
+                    formControlName="password" 
+                    placeholder="Contraseña"
+                    class="form-control form-control-lg"
+                    [class.is-invalid]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+                
+                <button type="button" (click)="toggleVisibility('password')" class="btn btn-outline-secondary" style="border-color: #ced4da;">
+                    @if (mostrarClave) { 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4A2A1A" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                        </svg> 
+                    } @else { 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4A2A1A" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                            <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588M5.21 3.088A7.029 7.029 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/>
+                            <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a3.5 3.5 0 0 1 2.829 2.828z"/>
+                            <path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12z"/>
+                        </svg>
                     }
+                </button>
+                
                 </div>
 
-                @if (mensajeError) {
-                    <p class="alert alert-danger text-center">{{mensajeError}}</p> 
-                }
-            </div>
+            @if (loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)) {
+                <div class="text-danger mt-1 small">
+                    @if (loginForm.get('password')?.hasError('required')) {
+                        <span>La contraseña es obligatoria.</span>
+                    }
+                </div>
+            }
+        </div>
 
-            <button 
-                type="submit" 
-                [disabled]="loginForm.invalid"
-                class="btn btn-primary btn-lg w-100 mb-3"> 
-                Acceder
-            </button>
-        </form>
+        @if (mensajeError) {
+            <p class="alert alert-danger text-center">{{mensajeError}}</p> 
+        }
+    </div>
+
+    <button 
+        type="submit" 
+        [disabled]="loginForm.invalid"
+        class="btn btn-primary btn-lg w-100 mb-3"> 
+        Acceder
+    </button>
+</form>
     </div>
 
     <div id="RedirectContenedor" class="card-footer text-center bg-light">
-        <p class="mb-0 text-muted">¿No tenés cuenta? <a routerLink="/auth/registrarse" class="text-decoration-none">Registrate aquí</a></p>
+       <p class="mb-2 text-muted small">
+        ¿Olvidaste tu clave? 
+        <a href="javascript:void(0)" (click)="showForgotModal.set(true)" class="text-decoration-none fw-bold">
+            Recupérala aquí
+        </a>
+    </p>
+
+        <p class="mb-0 text-muted">
+            ¿No tenés cuenta? 
+            <a routerLink="/auth/registrarse" class="text-decoration-none">Registrate aquí</a>
+        </p>
     </div>
 
+</div>
+
+<div class="modal-auth">
+    <app-modal-drawer 
+        [isOpen]="showForgotModal()" 
+        [title]="'Recuperar Contraseña'" 
+        (close)="showForgotModal.set(false)">
+
+        <app-forgot-password (close)="showForgotModal.set(false)"></app-forgot-password>
+
+    </app-modal-drawer>
 </div>

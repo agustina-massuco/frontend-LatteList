@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth-service';
-import { UserService } from '../../service/user-service';
 import User from '../../model/User';
 import { catchError, EMPTY, of, switchMap, tap, throwError } from 'rxjs';
+import { ModalDrawerComponent } from '../../../../shared/modal-drawer/modal-drawer.component';
+import { ForgotPassword } from '../forgot-password/forgot-password';
 
 
 @Component({
   selector: 'app-user-login',
-  imports: [ReactiveFormsModule, RouterLink], 
+  imports: [ReactiveFormsModule, RouterLink, ModalDrawerComponent, ForgotPassword], 
   templateUrl: './user-login.html',
   styleUrl: './user-login.css',
 })
@@ -18,11 +19,14 @@ export class UserLogin implements OnInit {
   loginForm!: FormGroup;
   mensajeError: string | null = null;
   isProcessing: boolean = false;
+  mostrarClave: boolean = false;
+
+
+  showForgotModal = signal<boolean>(false);
 
   constructor(
     public fb: FormBuilder,
     private authSer: AuthService,
-    private userSer: UserService,
     private router: Router
   ) { }
 
@@ -31,6 +35,10 @@ export class UserLogin implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
     });
+  }
+
+   toggleVisibility(field: 'password' | 'confirmPassword'): void {
+    if (field === 'password') this.mostrarClave = !this.mostrarClave;
   }
 
   onSubmit() {
@@ -102,4 +110,6 @@ export class UserLogin implements OnInit {
       })
     ).subscribe();
   }
+
+
 }
