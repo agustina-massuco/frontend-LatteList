@@ -1,0 +1,47 @@
+ @font-face {
+    font-family: 'FuenteLogo';
+   src: url('/fonts/Chewy-Regular.ttf') format('truetype');
+
+} 
+
+.navbar-brand { 
+    font-family: 'FuenteLogo', sans-serif;
+    font-size: 28px;
+    font-weight: normal; 
+}
+
+@font-face {
+  font-family: 'FuentePersonalCafe'; 
+  src: url('/fonts/Anton-Regular.ttf') format('truetype');
+  font-weight: normal; 
+  font-style: normal;
+  font-display: swap; 
+}
+
+.nav-item .nav-link.active {
+    font-weight: bold;
+    border-bottom: none !important; 
+    box-shadow: none !important;   
+    
+    background-color: white;
+    color: #3e2723 !important; 
+    padding: 8px 15px !important; 
+    border-radius: 20px; 
+    
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nav-item .nav-link {
+    padding: 8px 15px !important; 
+    transition: all 0.3s ease;
+}
+
+.nav-item .nav-link.active {
+    font-weight: bold;
+}
+
+/* Separación específica para el botón de cerrar sesión */
+.nav-item.logout-item {
+    margin-left: 12px; /* Espacio reducido antes del botón de cerrar sesión */
+    padding-left: 15px; /* Padding interno adicional */
+}

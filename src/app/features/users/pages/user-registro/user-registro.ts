@@ -4,8 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth-service';
 import { UserService } from '../../service/user-service';
-import { ToastService } from '../../../../shared/toast/toast.service';
 import User from '../../model/User';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-user-registro',
