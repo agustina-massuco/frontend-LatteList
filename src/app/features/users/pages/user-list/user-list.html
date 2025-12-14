@@ -1,1 +1,81 @@
-<p>user-list works!</p>
+<div class="user-menu">
+  <div class="filters-bar">
+    <div class="filters-single-row">
+      <div class="search-wrapper-inline">
+        <div class="search-filter" #searchContainer>
+          <app-input-search 
+            #searchInput
+            placeholder="Buscar usuario"
+            (search)="onSearchInput($event)" 
+            (searchSubmit)="onSearchSubmit($event)">
+          </app-input-search>
+          
+          @if (sugerencias().length > 0) {
+            <div class="suggestions-dropdown">
+              @for (user of sugerencias(); track user.id) {
+                <div class="suggestion-item" (click)="seleccionarSugerencia(user)">
+                  <div class="suggestion-info">
+                    <strong>{{ user.nombre }} {{ user.apellido }}</strong>
+                    <span class="suggestion-email">{{ user.email }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        
+        @if (search()) {
+          <button class="clear-search-btn" (click)="clearSearch()" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            Limpiar
+          </button>
+        }
+      </div>
+
+      <div class="filters-row-inline">
+        <select (change)="tipoFilter.set($any($event.target).value)" class="filter-select">
+          <option value="">Rol de usuario</option>
+          <option value="admin">Administrador</option>
+          <option value="cliente">Cliente</option>
+        </select>
+      </div>
+
+
+      <div class="filters-row-inline ms-2"> <select (change)="estadoFilter.set($any($event.target).value)" class="filter-select">
+            <option value="">Estados</option>
+            <option value="ACTIVO">Activos</option>
+            <option value="INACTIVO">Inactivos</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="user-list">
+    @for (user of paginatedUsers(); track user.id) {
+      <app-list-item
+        [item]="user"
+        (itemClick)="onUserClick($event)"
+      >
+      </app-list-item>
+    } 
+    @if (paginatedUsers().length === 0) {
+      <div class="no-results">
+        <p>No se encontraron usuarios con esos filtros</p>
+        <button class="clear-filters-btn" (click)="clearFilters()">Limpiar filtros</button>
+      </div>
+    }
+  </div>
+
+  @if (totalPages() > 1) {
+    <app-paginator
+      [currentPage]="page()"
+      [totalPages]="totalPages()"
+      (pageChange)="onPageChange($event)"
+    >
+    </app-paginator>
+  }
+</div>

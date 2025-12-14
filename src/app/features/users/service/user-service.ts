@@ -19,10 +19,12 @@ export class UserService {
     this.users.set(users);
   }
 
+  
+
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.userUrl).pipe(
-      tap(data => this.setUsers(data)), 
-      catchError(this.manejarError)
+    return this.http.get<User[]>(`${this.userUrl}/listado`).pipe(
+      tap(users => this.setUsers(users)), 
+      catchError(this.manejarError) 
     );
   }
 
