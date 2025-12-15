@@ -1,15 +1,19 @@
-export type EstadoReview = 'ACTIVO' | 'INACTIVO' | 'ELIMINADO';
+import { TipoReaccion } from "./LikeReview";
 
 
 export default interface Review {
-    id: string, 
-    puntuacion: number,
-    comentario: string, 
-    fecha?: string, 
-    userId: string, 
-    cafeId: string, 
-    etiquetas: string[],
-    costoPromedio: string,
-    estado: EstadoReview,
-    fotos?: string[]; 
+  id: number;
+  puntuacion: number;
+  comentario: string;
+  fecha: string;
+  userId: number;
+  cafeId: number;
+  etiquetas: string[];
+  costoPromedio: 'BARATO' | 'MEDIO' | 'CARO' | null;
+  estado: string;
+  fotos: string[];
+
+  likes: number;
+  dislikes: number;
+  reaccionUsuario: TipoReaccion | null;
 }

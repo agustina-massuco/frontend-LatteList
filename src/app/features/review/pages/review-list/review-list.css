@@ -1,0 +1,838 @@
+/* ============================ */
+/* CARD PRINCIPAL - Contenedor único */
+.review-list-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
+}
+
+/* ============================ */
+/* HEADER UNIFICADO - Sticky */
+.reviews-header-unified {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reviews-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.reviews-count {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Controles de ordenamiento y filtrado */
+.sort-control,
+.filter-control {
+  display: flex;
+  align-items: center;
+}
+
+.sort-control select,
+.filter-control select {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+}
+
+.sort-control select:hover,
+.filter-control select:hover {
+  border-color: #adb5bd;
+  background-color: #fff;
+}
+
+.sort-control select:focus,
+.filter-control select:focus {
+  outline: none;
+  border-color: #79462d;
+  box-shadow: 0 0 0 3px rgba(121, 70, 45, 0.1);
+}
+
+/* Botón de agregar en el header */
+.btn-add-review-header {
+  background: linear-gradient(135deg, #8b4513 0%, #6d3610 100%);
+  color: white;
+  border: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 2px 6px rgba(139, 69, 19, 0.25);
+  white-space: nowrap;
+}
+
+.btn-add-review-header:hover {
+  background: linear-gradient(135deg, #6d3610 0%, #5a2a0d 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(139, 69, 19, 0.35);
+}
+
+/* ============================ */
+/* CONTENIDO DE RESEÑAS - Scrolleable */
+.reviews-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Estado de carga */
+.loading-text {
+  text-align: center;
+  color: #6c757d;
+  font-size: 1rem;
+  padding: 3rem 0;
+}
+
+/* ============================ */
+/* Tarjeta de reseña - Diseño compacto y profesional */
+.review-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid #79462d;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+.review-card:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  border-left-color: #8b4513;
+}
+
+.review-card.mia {
+  background-color: #faf9f7;
+  border-left-color: #8b4513;
+  border-left-width: 3px;
+}
+
+.review-card.admin-inactiva {
+  background-color: #f5f5f5;
+  color: #6c757d;
+  opacity: 0.75;
+}
+
+.review-card.clickable {
+  cursor: pointer;
+}
+
+.review-card.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================ */
+/* HEADER SIMPLE - Usuario + Menú */
+.review-header-simple {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  gap: 0.75rem;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.foto-perfil-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.foto-perfil-mini:hover {
+  transform: scale(1.08);
+}
+
+.user-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c3e50;
+  cursor: default;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Solo para admins: clickeable con hover más notorio */
+.user-name.admin-clickable {
+  cursor: pointer;
+}
+
+.user-name.admin-clickable:hover {
+  color: #79462d;
+  background-color: rgba(121, 70, 45, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  transform: translateY(-1px);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  display: inline-block;
+  width: fit-content;
+}
+
+/* Estilos para modo perfil */
+.cafe-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #79462d, #5a3320);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cafe-name-link {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #79462d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fecha-inline {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* ============================ */
+/* FILA DE ESTRELLAS + PRECIO */
+.rating-price-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.65rem;
+}
+
+.estrellas-grandes {
+  display: flex;
+  gap: 2px;
+  font-size: 1.2rem;
+}
+
+.estrellas-grandes span {
+  color: #d1d5db;
+  transition: all 0.2s;
+}
+
+.estrellas-grandes span.rellena {
+  color: #facc15;
+}
+
+/* Precio estilo tag - gris con borde */
+.precio-badge-inline {
+  background: #f8f9fa;
+  color: #6c757d;
+  padding: 0.25rem 0.55rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #dee2e6;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ============================ */
+/* BODY LAYOUT - Posición relativa para fotos flotantes */
+.review-body-layout {
+  position: relative;
+  min-height: 50px;
+}
+
+.review-content-full {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-right: 200px;
+}
+
+/* Comentario con burbuja de diálogo */
+.comentario-container {
+  position: relative;
+  margin-bottom: 0.15rem;
+}
+
+.comentario-texto {
+  position: relative;
+  display: inline-block;
+  background-color: #ffffff;
+  border: 1.5px solid #dee2e6;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.88rem;
+  color: #495057;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  margin-left: 14px;
+  max-width: calc(100% - 14px);
+  word-wrap: break-word;
+}
+
+/* Colita de la burbuja (sombra/borde) */
+.comentario-texto::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 12px;
+  width: 0;
+  height: 0;
+  border: 7px solid transparent;
+  border-right-color: #dee2e6;
+  z-index: 1;
+}
+
+/* Colita de la burbuja (relleno) */
+.comentario-texto::after {
+  content: "";
+  position: absolute;
+  left: -11px;
+  top: 12px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-right-color: #ffffff;
+  z-index: 2;
+}
+
+/* Etiquetas pegadas al comentario (volvemos al original) */
+.tags-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-left: 14px;
+  margin-top: 0rem;
+}
+
+.tag-mini {
+  background: #f0f0f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  color: #495057;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Fotos en fila abajo, alineadas a la izquierda */
+.fotos-row-bottom {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: 0;
+  margin-top: 0.5rem;
+  align-items: flex-start;
+}
+
+.comentario-vacio-mini {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #adb5bd;
+  font-style: italic;
+}
+
+/* Botones de admin inline - ahora alineados con tags */
+.acciones-inline {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.btn-baja-mini,
+.btn-alta-mini {
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-baja-mini {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-baja-mini:hover {
+  background: #c82333;
+}
+
+.btn-alta-mini {
+  background: #28a745;
+  color: white;
+}
+
+.btn-alta-mini:hover {
+  background: #218838;
+}
+
+/* Botones de admin en el header - arriba a la derecha */
+.acciones-admin-header {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+
+.btn-baja-header,
+.btn-alta-header {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-baja-header {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-baja-header:hover {
+  background: #c82333;
+}
+
+.btn-alta-header {
+  background: #28a745;
+  color: white;
+}
+
+.btn-alta-header:hover {
+  background: #218838;
+}
+
+/* ============================ */
+/* FOTOS - Thumbnails en fila abajo */
+.fotos-corner {
+  position: absolute;
+  bottom: 0;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.foto-thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #e8e8e8;
+  flex-shrink: 0;
+}
+
+.foto-thumbnail:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-color: #79462d;
+}
+
+.more-photos {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(121, 70, 45, 0.9), rgba(139, 69, 19, 0.95));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid rgba(121, 70, 45, 0.3);
+}
+
+.more-photos:hover {
+  transform: scale(1.05);
+  box-shadow: 0 3px 10px rgba(121, 70, 45, 0.4);
+}
+
+/* ============================ */
+/* Mensaje de sin reseñas */
+.sin-resenas  {
+  text-align: center;
+  color: #6c757d;
+  font-size: 1rem;
+  font-style: italic;
+  padding: 3rem 2rem;
+  background-color: #fafafa;
+  border-radius: 10px;
+  margin: 1rem 0;
+}
+
+/* ============================ */
+/* Botones de acciones (legacy - mantenido por compatibilidad) */
+.acciones-review,
+.acciones-admin,
+.acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ============================ */
+/* Mensaje temporal */
+.mensaje-temporal {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #79462d;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  animation: fadeInOut 2s forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* ============================ */
+/* Lightbox (foto ampliada al hacer clic) */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.lightbox-img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease;
+}
+
+.lightbox-img:hover {
+  transform: scale(1.02);
+}
+
+.lightbox-arrow {
+  position: absolute;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  padding: 1rem;
+  transition: all 0.2s;
+}
+
+.lightbox-arrow:hover {
+  color: #79462d;
+  transform: scale(1.1);
+}
+
+.lightbox-arrow.left {
+  left: 20px;
+}
+
+.lightbox-arrow.right {
+  right: 20px;
+}
+
+/* ============================ */
+/* Menú de 3 puntos para editar/eliminar */
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.menu-toggle:hover {
+  background: #f0f0f0;
+  color: #495057;
+}
+
+
+
+.menu-acciones {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.menu-desplegable {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 120px;
+  z-index: 100;
+}
+
+.menu-desplegable button {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: white;
+  border: none;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #495057;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.menu-desplegable button:hover {
+  background: #f8f9fa;
+  color: #79462d;
+}
+
+
+
+
+.menu-acciones:hover .menu-desplegable {
+  display: block;
+}
+
+/* ============================ */
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .reviews-header-unified {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sort-control select,
+  .filter-control select {
+    font-size: 0.85rem;
+    padding: 0.45rem 1.75rem 0.45rem 0.65rem;
+  }
+
+  .btn-add-review-header {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .reviews-title {
+    font-size: 1.2rem;
+  }
+
+  .reviews-count {
+    font-size: 0.9rem;
+  }
+
+  .review-list-card {
+    max-height: 500px;
+  }
+
+  .reviews-content {
+    padding: 0.75rem 1rem 1rem 1rem;
+  }
+
+  .review-card {
+    padding: 0.75rem 0.85rem;
+  }
+
+  /* Layout de reseña en móvil */
+  .review-body-layout {
+    min-height: auto;
+  }
+
+  .review-content-full {
+    padding-right: 0;
+    padding-bottom: 4.5rem;
+  }
+
+  .rating-price-row {
+    gap: 0.6rem;
+  }
+
+  .estrellas-grandes {
+    font-size: 1.1rem;
+  }
+
+  .fotos-corner {
+    position: static;
+    margin-top: 0.75rem;
+    justify-content: flex-start;
+  }
+
+  .foto-thumbnail {
+    width: 70px;
+    height: 70px;
+  }
+
+  .more-photos {
+    width: 70px;
+    height: 70px;
+  }
+
+  .user-name {
+    font-size: 0.85rem;
+  }
+
+  .estrellas-grandes {
+    font-size: 1rem;
+  }
+
+  .precio-badge-inline {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.55rem;
+  }
+}
+
+
+
+
+/* review-list.css */
+
+.review-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee; /* Separador para diferenciar de la reseña */
+}
+
+.action-button {
+    /* Estilo base de los botones */
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #555; /* Color gris suave para inactivo */
+}
+
+.action-button:hover:not(:disabled) {
+    border-color: #007bff; /* Borde azul al pasar el mouse */
+}
+
+.action-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* --- ESTADO ACTIVO: UNIFICADO (Usa el color #5a2a0d) --- */
+
+.action-button.reaction-active {
+    /* Color marrón fuerte que quieres */
+    color: #5a2a0d; 
+    
+    /* Fondo muy claro basado en el marrón (puedes ajustarlo) */
+    background-color: #f6f0ec; 
+    
+    /* Borde en el mismo tono */
+    border-color: #5a2a0d; 
+}

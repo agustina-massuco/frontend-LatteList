@@ -1,1 +1,129 @@
-<p>review-form works!</p>
+
+<div class="modal-overlay" (click)="cancelarForm()" (wheel)="$event.preventDefault()" (touchmove)="$event.preventDefault()"></div>
+
+<div class="modal">
+  
+  <div class="modal-header">
+    <h3>{{ reviewEditar ? 'Editar reseña' : 'Nueva reseña' }}</h3>
+  </div>
+
+ 
+  <div class="modal-body">
+    <form (ngSubmit)="mostrarModalConfirmacion()">
+      
+      <div class="estrellas">
+        @for (star of [1,2,3,4,5]; track $index) {
+          <span
+            (click)="seleccionarEstrella(star)"
+            (mouseenter)="entrarEstrella(star)"
+            (mouseleave)="salirEstrella()">
+            {{ star <= (hover || review.puntuacion) ? '★' : '☆' }}
+          </span>
+        }
+      </div>
+
+      @if (mensajeErrorPuntuacion) {
+        <div class="mensaje-error">{{ mensajeErrorPuntuacion }}</div>
+      }
+
+     
+      <textarea [(ngModel)]="review.comentario" name="comentario" placeholder="Comparte detalles de tu experiencia en este lugar" required></textarea>
+      <p class="contador">{{ review.comentario.length }}/300 caracteres</p>
+
+     
+
+
+
+
+   <select #selEtiqueta
+        (change)="agregarEtiqueta(selEtiqueta.value); selEtiqueta.value=''">
+
+  <option value="" disabled selected>Seleccioná una etiqueta</option>
+
+  @for (etiqueta of etiquetasDisponibles; track $index) {
+    <option [value]="etiqueta.value">
+      {{ etiqueta.label }}
+    </option>
+  }
+</select>
+ 
+      @if (mensajeErrorEtiquetas) {
+        <div class="mensaje-error">{{ mensajeErrorEtiquetas }}</div>
+      }
+     @if (review.etiquetas.length > 0) {
+  <div class="chips-container">
+    @for (etiqueta of review.etiquetas; track $index) {
+      <span class="chip">
+        {{ getLabelEtiqueta(etiqueta) }}
+        <button type="button" (click)="quitarEtiqueta(etiqueta)">×</button>
+      </span>
+    }
+  </div>
+}
+
+
+
+
+      <label for="file-input" class="file-upload-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        Añadir fotos
+      </label>
+      <input id="file-input" type="file" multiple (change)="onFileSelected($event)" accept="image/*" style="display: none;" />
+      @if (mensajeFotos) {
+        <div class="mensaje-error">{{ mensajeFotos }}</div>
+      }
+      @if (fotosPreview.length > 0) {
+        <div class="fotos-preview">
+          @for (foto of fotosPreview; track $index) {
+            <div class="foto-wrapper">
+              <img [src]="foto" />
+              <button type="button" (click)="quitarFoto($index)">×</button>
+            </div>
+          }
+        </div>
+      }
+
+
+     <div class="costo-promedio">
+  @for (costo of COSTOS_PROMEDIO; track $index) {
+    <label>
+      <input type="radio"
+             name="costoPromedio"
+             [value]="costo.value"
+             [(ngModel)]="review.costoPromedio">
+      <span class="precio-simbolo">{{ costo.label }}</span>
+      <span class="precio-texto">
+        @if (costo.value === 'BARATO') { (Barato) }
+        @else if (costo.value === 'MEDIO') { (Medio) }
+        @else if (costo.value === 'CARO') { (Caro) }
+      </span>
+    </label>
+  }
+</div>
+
+
+
+
+      
+    </form>
+  </div>
+
+
+  <div class="modal-footer">
+    <button type="button" (click)="cancelarForm()">Cancelar</button>
+    <button type="submit" (click)="mostrarModalConfirmacion()">{{ reviewEditar ? 'Guardar cambios' : 'Publicar' }}</button>
+  </div>
+</div>
+
+<app-confirmacion-modal
+  [visible]="modalVisible"
+  [titulo]="modalTitulo"
+  [mensaje]="modalMensaje"
+  [textoConfirmar]="'Confirmar'"
+  [textoCancelar]="'Cancelar'"
+  (confirmar)="ejecutarAccionConfirmada()"
+  (cancelar)="cerrarModal()">
+</app-confirmacion-modal>
