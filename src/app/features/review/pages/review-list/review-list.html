@@ -1,1 +1,241 @@
-<p>review-list works!</p>
+<div class="review-list-card">
+
+    @if (mensajeTemporal) {
+    <div class="mensaje-temporal">{{ mensajeTemporal }}</div>
+    }
+
+    @if (loading) {
+    <p class="loading-text">Cargando reseñas...</p>
+    } @else {
+
+    @if (error) {
+    <p class="error"> {{ error }}</p>
+    } @else {
+
+    <div class="reviews-header-unified">
+        <div class="header-left">
+            <h3 class="reviews-title">Reseñas</h3>
+            <span class="reviews-count">({{ reviewsOrdenadasYFiltradas().length }})</span>
+        </div>
+
+        <div class="header-right">
+            <div class="sort-control">
+                <select id="orden" [ngModel]="ordenSeleccionado()" (ngModelChange)="ordenSeleccionado.set($event)">
+                    <option value="fechaDesc">Más reciente</option>
+                    <option value="fechaAsc">Más antiguo</option>
+                    <option value="puntuacionAlta">Mayor puntuación</option>
+                    <option value="puntuacionBaja">Menor puntuación</option>
+                    @if(!auth.isAdmin() && modoVista === 'cafe'){
+                    <option value="misPrimeras">Mis reseñas</option>
+                    }
+                </select>
+            </div>
+
+            @if (auth.isAdmin()) {
+            <div class="filter-control">
+                <select id="filtro" [ngModel]="filtroActivo()" (ngModelChange)="filtroActivo.set($event)">
+                    <option value="todos">Todas</option>
+                    <option value="activas">Activas</option>
+                    <option value="inactivas">Inactivas</option>
+                </select>
+            </div>
+            }
+
+            @if (!auth.isAdmin() && modoVista==='cafe'){
+            <button class="btn-add-review-header" (click)="agregarResenaNueva.emit()">
+                Agregar
+            </button>
+            }
+        </div>
+    </div>
+
+
+    <div class="reviews-content">
+        @if (reviewsOrdenadasYFiltradas().length === 0) {
+        <p class="sin-resenas">No hay reseñas disponibles.</p>
+        } @else {
+        <div class="review-list">
+            @for (review of reviewsOrdenadasYFiltradas(); track review.id) {
+
+            <div class="review-card" [class.mia]="esPropietaria(review)"
+                [class.admin-inactiva]="auth.isAdmin() && review.estado=='INACTIVA' "
+                [class.clickable]="modoVista === 'perfil'"
+                (click)="modoVista === 'perfil' && irACafeDetail(review.cafeId)">
+
+                @if (modoVista === 'cafe') {
+                @let user = getUserData(review.userId);
+                @if (user) {
+                <div class="review-header-simple">
+                    <div class="user-section">
+                        <img class="foto-perfil-mini" [src]=getFotoPerfil(user) alt="Foto perfil"
+                            (click)="$event.stopPropagation(); abrirLightbox(getFotoPerfil(user))" />
+                        <div class="user-info-column">
+                            <h4 class="user-name" [class.admin-clickable]="auth.isAdmin()"
+                                (click)="onUserNameClick($event, user.id)">
+                                {{ user.nombre }} {{ user.apellido }}</h4>
+                            <span class="fecha-inline">{{ formatearFecha(review.fecha) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="header-actions">
+                        @if(esPropietaria(review)){
+                        <div class="menu-acciones">
+                            <button class="menu-toggle" (click)="$event.stopPropagation()">⋮</button>
+                            <div class="menu-desplegable">
+                                <button
+                                    (click)="$event.stopPropagation(); abrirFormularioEdicion(review)">Editar</button>
+                                <button (click)="$event.stopPropagation(); eliminarReview(review)">Eliminar</button>
+                            </div>
+                        </div>
+                        }
+
+                        @if (auth.isAdmin()) {
+                        <div class="acciones-admin-header">
+                            @if (review.estado==='ACTIVA') {
+                            <button class="btn-baja-header"
+                                (click)="$event.stopPropagation(); confirmarBaja(review)">Dar de
+                                baja</button>
+                            } @else {
+                            <button class="btn-alta-header"
+                                (click)="$event.stopPropagation(); confirmarAlta(review)">Activar</button>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+                } @else {
+                <div class="review-header-simple">
+                    <div class="user-section">
+                        <div class="user-info-column">
+                            <h4 class="cafe-name-link">{{ getCafeName(review.cafeId) }}</h4>
+                            <span class="fecha-inline">{{ formatearFecha(review.fecha) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="header-actions">
+                        @if(esPropietaria(review)){
+                        <div class="menu-acciones">
+                            <button class="menu-toggle" (click)="$event.stopPropagation()">⋮</button>
+                            <div class="menu-desplegable">
+                                <button
+                                    (click)="$event.stopPropagation(); abrirFormularioEdicion(review)">Editar</button>
+                                <button (click)="$event.stopPropagation(); eliminarReview(review)">Eliminar</button>
+                            </div>
+                        </div>
+                        }
+
+                        @if (auth.isAdmin()) {
+                        <div class="acciones-admin-header">
+                            @if (review.estado==='ACTIVA') {
+                            <button class="btn-baja-header"
+                                (click)="$event.stopPropagation(); confirmarBaja(review)">Dar de
+                                baja</button>
+                            } @else {
+                            <button class="btn-alta-header"
+                                (click)="$event.stopPropagation(); confirmarAlta(review)">Activar</button>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+
+                <div class="rating-price-row">
+                    <div class="estrellas-grandes">
+                        @for (estrella of estrellas; track $index) {
+                        <span [class.rellena]="estrella <= review.puntuacion">★</span>
+                        }
+                    </div>
+                    @if (review.costoPromedio) {
+                    <span class="precio-badge-inline">{{ getCostoTexto(review.costoPromedio) }}</span>
+                    }
+                </div>
+
+                <div class="review-body-layout">
+                    <div class="review-content-full">
+                        @if (review.comentario) {
+                        <div class="comentario-container">
+                            <p class="comentario-texto">{{ review.comentario }}</p>
+                        </div>
+                        } @else {
+                        <p class="comentario-vacio-mini">Sin comentario</p>
+                        }
+
+                        @if (review.etiquetas.length) {
+                        <div class="tags-compact">
+                            @for (etiqueta of review.etiquetas; track etiqueta) {
+                            <span class="tag-mini">{{ getEtiquetaLabel(etiqueta) }}</span>
+
+                            }
+                        </div>
+                        }
+                    </div>
+
+                    @if (review.fotos && review.fotos.length > 0) {
+                    <div class="fotos-corner">
+                        @for (foto of review.fotos; track foto; let idx = $index) {
+                        @if (idx
+                        < 3) { <img class="foto-thumbnail" [src]="foto" alt="Foto"
+                            (click)="$event.stopPropagation(); abrirLightbox(review.fotos, foto)" />
+                        }
+                        }
+                        @if (review.fotos.length > 3) {
+                        <div class="more-photos"
+                            (click)="$event.stopPropagation(); abrirLightbox(review.fotos, review.fotos[3])">
+                            +{{ review.fotos.length - 3 }}
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+
+
+                <div class="review-actions mt-3">
+                    @if (auth.isLoggedIn()) {
+                    <button (click)="$event.stopPropagation(); manejarReaccion(review, TIPO_LIKE)" class="action-button"
+                        [class.reaction-active]="review.reaccionUsuario === TIPO_LIKE">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span>{{ review.likes }}</span>
+                    </button>
+
+                    <button (click)="$event.stopPropagation(); manejarReaccion(review, TIPO_DISLIKE)"
+                        class="action-button" [class.reaction-active]="review.reaccionUsuario === TIPO_DISLIKE">
+                        <i class="fas fa-thumbs-down"></i>
+                        <span>{{ review.dislikes }}</span>
+                    </button>
+                    } @else {
+                    <small class="text-muted ms-3">Inicia sesión para reaccionar.</small>
+                    }
+                </div>
+
+
+
+
+
+
+            </div>
+            }
+        </div>
+        }
+    </div>
+
+    }
+    }
+</div>
+
+
+@if (modalVisible) {
+<app-confirmacion-modal [visible]="modalVisible" [titulo]="modalTitulo" [mensaje]="modalMensaje"
+    (confirmar)="ejecutarAccionConfirmada()" (cancelar)="cerrarModal()">
+</app-confirmacion-modal>
+}
+
+
+@if (imagenSeleccionada) {
+<div class="lightbox" (click)="cerrarLightbox()">
+    <span class="lightbox-arrow left" (click)="$event.stopPropagation(); anteriorImagen()">&#10094;</span>
+    <img class="lightbox-img" [src]="imagenSeleccionada" alt="Foto ampliada" />
+    <span class="lightbox-arrow right" (click)="$event.stopPropagation(); siguienteImagen()">&#10095;</span>
+</div>
+}

@@ -1,1 +1,27 @@
-<p>descubrir works!</p>
+<div class="discover-container">
+    
+  <div class="discover-button-container">
+    <button class="discover-button" (click)="cerrarModal()">
+      Volver
+    </button>
+  </div>
+
+  <app-spin-wheel 
+    [cafeterias]="cafeteriasReducidas()"
+    (selected)="onCafeSelected($event)">
+  </app-spin-wheel>
+
+</div>
+
+@if (visibleModal()) {
+  <app-confirmacion-modal
+    [visible]="visibleModal()"
+    [titulo]="'¡Café seleccionado!'"
+    [mensaje]="'El café elegido es ' + selectedCafe?.nombre"
+    [textoConfirmar]="'Conocer café'"
+    [textoCancelar]="'Volver a tirar'"
+    (confirmar)="onConfirmar()"
+    (cancelar)="onVolverATirar()"
+    (overlayClick)="cerrarModal()">
+  </app-confirmacion-modal>
+}

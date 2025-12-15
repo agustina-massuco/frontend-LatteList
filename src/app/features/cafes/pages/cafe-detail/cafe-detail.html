@@ -1,1 +1,218 @@
-<p>cafe-detail works!</p>
+@if (loading) {
+<div class="loading-container">
+  <p>⏳ Cargando información del café...</p>
+</div>
+} @else { @if (cafe()) {
+<div class="cafe-detail">
+  <!-- Tarjeta única con toda la información -->
+  <div class="info-card">
+    <!-- Header con nombre y bookmark -->
+    <div class="header-section">
+      <h1 class="cafe-name">{{ cafe()?.nombre }}</h1>
+
+      @if (!auth.isAdmin()) {
+      <button class="btn-bookmark" (click)="openListModal()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path
+            d="M12 6a4 4 0 0 1 4 4v11a1 1 0 0 1 -1.514 .857l-4.486 -2.691l-4.486 2.691a1 1 0 0 1 -1.508 -.743l-.006 -.114v-11a4 4 0 0 1 4 -4h4z"
+          />
+          <path
+            d="M16 2a4 4 0 0 1 4 4v11a1 1 0 0 1 -2 0v-11a2 2 0 0 0 -2 -2h-5a1 1 0 0 1 0 -2h5z"
+          />
+        </svg>
+      </button>
+      }
+    </div>
+
+    <!-- Rating, precio y tags - DESTACADOS -->
+    <div class="main-info">
+      @if (promedioPuntaje() > 0) {
+      <div class="rating-stars-large">
+        @for (estrella of getEstrellas(); track $index) { @if (estrella === '★') {
+        <span class="star filled">★</span>
+        } @else if (estrella === '⯨') {
+        <span class="star half">★</span>
+        } @else {
+        <span class="star empty">★</span>
+        } }
+        <span class="rating-value">{{ promedioPuntaje().toFixed(1) }}</span>
+      </div>
+        } 
+     @if (precioPromedio()){
+  <app-pills [text]="getPrecioSimbolo()" variant="badge"></app-pills>
+     }
+
+    </div>
+
+    <div class="pills-section">
+      <!-- Etiquetas populares -->
+      @if (topEtiquetasConIndex().length > 0) { @for (etiquetaObj of topEtiquetasConIndex(); track
+      $index) {
+      <app-pills
+  [text]="getEtiquetaLabel(etiquetaObj.tag)"
+  variant="tag">
+</app-pills>
+
+      } }
+
+      @if (topEtiquetasConIndex().length > 0 && cafeAttributes().length > 0) {
+      <div class="pills-separator"></div>
+      }
+
+      @for (attribute of cafeAttributes(); track $index) {
+      <app-pills
+        [text]="attribute.text"
+        [icon]="attribute.icon"
+        variant="badge"
+        [type]="attribute.type"
+      >
+      </app-pills>
+      }
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="contact-section">
+      <h3>Contacto</h3>
+      <div class="contact-grid-compact">
+        @if (cafe()?.direccion) {
+        <div class="contact-item-compact">
+          <span class="text">{{ formatearDireccion(cafe()?.direccion || '') }}</span>
+        </div>
+        } @if (cafe()?.telefono) {
+        <div class="contact-item-compact">
+          <span class="icon">📞</span>
+          <span class="text">{{ cafe()?.telefono }}</span>
+        </div>
+        } @if (cafe()?.email) {
+        <div class="contact-item-compact">
+          <span class="icon">✉️</span>
+          <span class="text">{{ cafe()?.email }}</span>
+        </div>
+        } @if (cafe()?.website) {
+        <div class="contact-item-compact">
+          <span class="icon">🌐</span>
+          <span class="text"><a [href]="cafe()?.website" target="_blank">Sitio web</a></span>
+        </div>
+        } @if (cafe()?.opening_hours) {
+        <div class="contact-item-compact">
+          <span class="icon">🕐</span>
+          <span class="text">{{ getHorarioBonito(cafe()!) }}</span>
+        </div>
+
+      
+        }
+      </div>
+    </div>
+  </div>
+
+
+  <div class="reviews-section">
+    @if (formVisible) {
+    <app-review-form
+      #reviewForm
+      [cafe]="cafeSeleccionado || cafe()"
+      [reviewEditar]="reviewEditar"
+      (resenaEnviada)="manejarResenaEnviada($event)"
+      (cancelar)="cancelarResena()"
+    >
+    </app-review-form>
+    }
+
+
+<app-review-list
+  [cafeId]="cafe()?.id || 0"
+  [actualizar]="actualizarLista"
+  [mostrarBotonAgregar]="!auth.isAdmin()"
+  (editarResena)="abrirFormularioEdicion($event)"
+  (resenaEliminada)="manejarResenaEliminada($event)"
+  (agregarResenaNueva)="mostrarFormulario(cafe() ?? undefined)"
+  (reseñasActualizadas)="refreshCafeDetail()"
+  [modoVista]="'cafe'">
+</app-review-list>
+
+  </div>
+
+  <button class="btn-back" (click)="volver()">Volver a las listas</button>
+
+  <app-modal-drawer [isOpen]="isModalOpen()" [title]="'Agregar a lista'" (close)="closeModal()">
+    <div class="modal-content-wrapper">
+      @if (cafe()) {
+      <div class="selected-cafe-info">
+        <div class="cafe-icon">{{ cafe()!.nombre.charAt(0) }}</div>
+        <div class="cafe-details">
+          <h3>{{ cafe()!.nombre }}</h3>
+          <p>{{ formatearDireccion(cafe()!.direccion || '') }}</p>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <p>Selecciona una lista para agregar este café:</p>
+
+        @if (loadingLists()) {
+        <div class="loading-lists">
+          <p>Cargando listas...</p>
+        </div>
+        } @else if (userLists().length === 0) {
+        <div class="no-lists">
+          <p>No tienes listas creadas aún</p>
+          <button class="create-list-btn" (click)="createNewList()">
+            + Crear tu primera lista
+          </button>
+        </div>
+        } @else {
+        <div class="lists-container">
+          @for (listItem of userListItems(); track listItem.listId) {
+          <app-list-item [item]="listItem.item" (actionClick)="toggleCafeInList(listItem.listId)">
+          </app-list-item>
+          } @if (showCreateForm()) {
+          <div class="create-form-container">
+            <input
+              type="text"
+              class="list-name-input"
+              placeholder="Nombre de la lista"
+              [(ngModel)]="newListName"
+              [disabled]="creatingList()"
+              (keyup.enter)="saveNewList()"
+              autofocus
+            />
+            <div class="form-buttons">
+              <button
+                class="save-btn"
+                (click)="saveNewList()"
+                [disabled]="creatingList() || !newListName().trim()"
+              >
+                @if (creatingList()) {
+                <span>Guardando...</span>
+                } @else {
+                <span>Guardar</span>
+                }
+              </button>
+              <button class="cancel-btn" (click)="cancelCreateList()" [disabled]="creatingList()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+          } @else {
+          <button class="create-list-btn" (click)="createNewList()">Crear nueva lista</button>
+          }
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </app-modal-drawer>
+</div>
+} @else {
+<div class="error-container">
+  <p>😢 No se encontró información del café.</p>
+  <button class="btn-back" (click)="volver()">← Volver</button>
+</div>
+} }
