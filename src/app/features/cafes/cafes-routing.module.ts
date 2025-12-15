@@ -1,14 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CafeList } from './pages/cafe-list/cafe-list';
-import { CafeDetail } from './pages/cafe-detail/cafe-detail';
 import { Descubrir } from './pages/descubrir/descubrir';
+import { Mapa } from './pages/mapa/mapa';
+import { CafeListComponent } from './pages/cafe-list/cafe-list';
+import { CafeDetailComponent } from './pages/cafe-detail/cafe-detail';
 
 const routes: Routes = [
 
-     { path: '', component: CafeList },          
-   {path:'descubrir', component: Descubrir},
-  { path: ':id', component: CafeDetail }     
+  { path: '', component: CafeListComponent },          
+  {path:'descubrir', component: Descubrir},
+  {path: 'map', component: Mapa}  ,
+  { path: ':id', component: CafeDetailComponent }
 ];
 
 @NgModule({

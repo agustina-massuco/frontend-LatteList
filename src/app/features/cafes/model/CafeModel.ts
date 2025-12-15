@@ -11,6 +11,7 @@ export default class Cafe {
   website?: string;
   cuisine?: string;         
   openingHours?: string;   
+  abiertoAhora?: boolean;
   takeaway?: boolean;
   delivery?: boolean;
   internet_access?: boolean;

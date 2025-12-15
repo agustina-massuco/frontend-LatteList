@@ -1,0 +1,510 @@
+/* Cafe Menu Container */
+.cafe-menu {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+
+.cafe-address {
+  font-size: 13px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Title */
+.menu-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #262626;
+  margin: 0 0 30px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Filters Bar */
+.filters-bar {
+  background: #ffffff;
+  padding: 12px 20px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid #dbdbdb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Search Wrapper - contiene input y botón */
+.search-wrapper {
+  width: 70%;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Search Filter */
+.search-filter {
+  flex: 1;
+  position: relative;
+}
+
+/* Clear Search Button */
+.clear-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: transparent;
+  color: #8e8e8e;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: fadeIn 0.3s ease-out;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.clear-search-btn:hover {
+  background: #f5f5f5;
+  color: #262626;
+}
+
+.clear-search-btn:active {
+  background: #e8e8e8;
+}
+
+.clear-search-btn svg {
+  flex-shrink: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Suggestions Dropdown */
+.suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #f9f9f9;
+}
+
+.suggestion-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.suggestion-info strong {
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+  display: block;
+}
+
+/* Switches Filter - Horizontal Layout */
+.switches-filter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Results Info */
+.results-info {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.results-info p {
+  font-size: 14px;
+  color: #8e8e8e;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Cafe List */
+.cafe-list {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dbdbdb;
+  margin-bottom: 20px;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.no-results p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.clear-filters-btn {
+  padding: 12px 24px;
+  background: #79462d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  background: #5a3320;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.clear-filters-btn:active {
+  transform: translateY(0);
+}
+
+/* Paginación */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #dbdbdb;
+}
+
+.paginacion button {
+  padding: 10px 20px;
+  background: #79462d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paginacion button:hover:not(:disabled) {
+  background: #5a3320;
+  transform: translateY(-2px);
+}
+
+.paginacion button:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.paginacion span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .cafe-menu {
+    padding: 16px;
+  }
+
+  .menu-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .filters-bar {
+    padding: 20px 16px;
+    gap: 20px;
+  }
+
+  .search-wrapper {
+    width: 90%;
+  }
+
+  .switches-filter {
+    gap: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .menu-title {
+    font-size: 18px;
+  }
+
+  .filters-bar {
+    padding: 16px 12px;
+  }
+
+  .search-wrapper {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .clear-search-btn {
+    align-self: flex-end;
+  }
+
+  .switches-filter {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .paginacion {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .paginacion button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+/* Modal Content Styles */
+.modal-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.selected-cafe-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+.cafe-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #79462d 0%, #5a3320 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.cafe-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.cafe-details h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.cafe-details p {
+  margin: 0;
+  font-size: 13px;
+  color: #8e8e8e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modal-actions p {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+}
+
+.lists-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* Sin gap porque list-item ya tiene border */
+}
+
+.lists-container app-list-item {
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.lists-container app-list-item:last-of-type {
+  border-bottom: none;
+}
+
+.loading-lists,
+.no-lists {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.loading-lists p,
+.no-lists p {
+  margin: 0 0 16px 0;
+  color: #8e8e8e;
+  font-size: 14px;
+}
+
+.create-list-btn {
+  width: 100%;
+  padding: 16px;
+  background: #79462d;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+}
+
+.create-list-btn:hover {
+  background: #5a3320;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(121, 70, 45, 0.3);
+}
+
+.create-list-btn:active {
+  transform: translateY(0);
+}
+
+/* Formulario inline para crear lista */
+.create-form-container {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  border: 2px solid #79462d;
+  margin-top: 12px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-name-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  margin-bottom: 12px;
+}
+
+.list-name-input:focus {
+  outline: none;
+  border-color: #79462d;
+}
+
+.list-name-input:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.save-btn,
+.cancel-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-btn {
+  background: #79462d;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #5a3320;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(121, 70, 45, 0.3);
+}
+
+.save-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancel-btn {
+  background: white;
+  color: #666;
+  border: 1px solid #e0e0e0;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+.cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,1 +1,125 @@
-<p>cafe-list works!</p>
+<div class="cafe-menu">
+  <div class="filters-bar">
+    <div class="search-wrapper">
+      <div class="search-filter" #searchContainer>
+        <app-input-search #searchInput (search)="onSearchInput($event)" (searchSubmit)="onSearchSubmit($event)">
+        </app-input-search>
+
+        @if (sugerencias().length > 0) {
+        <div class="suggestions-dropdown">
+          @for (cafe of sugerencias(); track cafe.id) {
+          <div class="suggestion-item" (click)="seleccionarSugerencia(cafe)">
+            <div class="suggestion-info">
+              <strong>{{ cafe.nombre }}</strong>
+
+              @if (cafe.direccion) {
+              <div class="cafe-address">
+                {{ cafe.direccion }}
+              </div>
+              }
+
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+      @if (searchTerm()) {
+      <button class="clear-search-btn" (click)="clearSearch()" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+        Limpiar
+      </button>
+      }
+    </div>
+
+    <div class="switches-filter">
+      <app-switch label="delivery" (change)="alternarFiltro('delivery')"> </app-switch>
+
+      <app-switch label="takeaway" (change)="alternarFiltro('takeaway')"> </app-switch>
+
+      <app-switch label="internet" (change)="alternarFiltro('internet_access')"> </app-switch>
+
+      <app-switch label="outdoor" (change)="alternarFiltro('outdoor_seating')"> </app-switch>
+
+      <app-switch label="Abierto ahora" (change)="alternarFiltro('abiertoAhora')"> </app-switch>
+    </div>
+  </div>
+
+  <div class="cafe-list">
+    @for (cafe of cafesPaginados(); track cafe.id) {
+    <app-list-item [item]="cafe" (itemClick)="onCafeClick(cafe.id!)" (actionClick)="onBookmarkClick($event)">
+    </app-list-item>
+    } @if (cafeList().length === 0) {
+    <div class="no-results">
+      <p>😔 No se encontraron cafés con esos filtros</p>
+      <button class="clear-filters-btn" (click)="clearFilters()">Limpiar filtros</button>
+    </div>
+    }
+  </div>
+
+  @if (totalPaginas() > 1) {
+  <app-paginator [currentPage]="paginaActual()" [totalPages]="totalPaginas()" (pageChange)="onPageChange($event)">
+  </app-paginator>
+  }
+</div>
+
+<app-modal-drawer [isOpen]="isModalOpen()" [title]="'Agregar a lista'" (close)="closeModal()">
+  <div class="modal-content-wrapper">
+    @if (selectedCafe()) {
+    <div class="selected-cafe-info">
+      <div class="cafe-icon">{{ selectedCafe().title.charAt(0) }}</div>
+      <div class="cafe-details">
+        <h3>{{ selectedCafe().title }}</h3>
+        <p>{{ selectedCafe().description }}</p>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <p>Selecciona una lista para agregar este café:</p>
+
+      @if (loadingLists()) {
+      <div class="loading-lists">
+        <p>Cargando listas...</p>
+      </div>
+      } @else if (userLists().length === 0) {
+      <div class="no-lists">
+        <p>No tienes listas creadas aún</p>
+        <button class="create-list-btn" (click)="createNewList()"> Crear tu primera lista</button>
+      </div>
+      } @else {
+      <div class="lists-container">
+        @for (listItem of userListItems(); track listItem.listId) {
+        <app-list-item [item]="listItem.item" (actionClick)="toggleCafeInList(listItem.listId)">
+        </app-list-item>
+        }
+
+        @if (showCreateForm()) {
+        <div class="create-form-container">
+          <input type="text" class="list-name-input" placeholder="Nombre de la lista" [(ngModel)]="newListName"
+            [disabled]="creatingList()" (keyup.enter)="saveNewList()" autofocus />
+          <div class="form-buttons">
+            <button class="save-btn" (click)="saveNewList()" [disabled]="creatingList() || !newListName().trim()">
+              @if (creatingList()) {
+              <span>Guardando...</span>
+              } @else {
+              <span>Guardar</span>
+              }
+            </button>
+            <button class="cancel-btn" (click)="cancelCreateList()" [disabled]="creatingList()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+        } @else {
+        <button class="create-list-btn" (click)="createNewList()">Crear nueva lista</button>
+        }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</app-modal-drawer>
