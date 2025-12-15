@@ -1,1 +1,139 @@
-<p>user-details works!</p>
+@if (user) {
+<div class="container my-5">
+    
+    <div class="row g-4 align-items-stretch">
+        
+        <div class="col-md-4" [class.mx-auto]="user.tipoUser === 'ADMIN' && !viendoMiPerfil">
+            <div class="card shadow-lg p-4 h-100 profile-card-wrapper">
+                
+                @if (viendoMiPerfil || authSer.isAdmin()) {
+                <div class="menu-acciones profile-menu">
+                    <button class="menu-toggle" (click)="toggleMenuResena('perfil-acciones')" (blur)="cerrarMenuResena('perfil-acciones')">⋮</button>
+                    
+                    @if (menuResenaAbiertoId === 'perfil-acciones') {
+                    <div class="menu-desplegable shadow-sm show-menu admin-menu-fix">
+
+                        @if (viendoMiPerfil) {
+                            <button [routerLink]="['/usuarios/perfil/editar']">Editar Datos</button>
+                            <button [routerLink]="['/usuarios/cambiar-password']">Cambiar Contraseña</button>
+                            <hr class="dropdown-divider">
+                            <button class="text-warning" (click)="confirmarDesactivacionPropia()">Pausar Cuenta</button>
+                            <button class="text-danger" (click)="confirmarEliminacionPropia()">Eliminar Cuenta</button>
+                        }
+
+                        @if (!viendoMiPerfil && authSer.isAdmin()) {
+                            
+                            @if (user.estado === 'ACTIVO') {
+                        
+                                <button class="text-warning" (click)="confirmarInactivacionAjena()">Inactivar (Ban)</button>
+                            } 
+                            @else if (user.estado === 'INACTIVO') {
+                                <button class="text-success" (click)="darDeAltaUser(user.id!)">Reactivar Usuario</button>
+                            }
+                            @else if (user.estado === 'DESACTIVADO') {
+                                <small class="d-block px-3 text-muted">Usuario Pausado</small>
+                            }
+                        }
+
+                    </div>
+                    }
+                </div>
+                } 
+
+                <div class="text-center mt-3">
+                    <div class="position-relative profile-pic-wrapper mb-3 mx-auto" 
+                         [class.clickable]="viendoMiPerfil" 
+                         (click)="viendoMiPerfil ? abrirSelectorFoto() : null">
+                        
+                        <img [src]="getFotoPerfil(user)" class="profile-pic-large rounded-circle"
+                             [style.filter]="user.estado === 'INACTIVO' ? 'grayscale(100%)' : 'none'">
+                        
+                        @if (viendoMiPerfil) {
+                        <div class="photo-overlay d-flex align-items-center justify-content-center">
+                            <i class="bi bi-camera-fill me-2"></i> Cambiar Foto
+                        </div>
+                        }
+                    </div>
+                    
+                    <h1 class="h3 mb-1">{{ user.nombre }} {{ user.apellido }}</h1>
+                    <p class="text-muted">{{ user.email }}</p>
+
+                    @if (user.estado === 'INACTIVO') {
+                        <span class="badge bg-danger mb-2">SUSPENDIDO</span>
+                    }
+                    @if (user.tipoUser === 'ADMIN') {
+                        <span class="badge bg-primary mb-2">ADMINISTRADOR</span>
+                    }
+
+                    @if (user.tipoUser !== 'ADMIN') {
+                        <div class="stats-section mt-4 pt-3 border-top">
+                            <h5 class="text-secondary mb-3">Actividad</h5>
+                            <div class="d-flex justify-content-around">
+                                <div class="stat-item">
+                                    <p class="stat-value display-6 mb-0">{{ allUserReviews.length }}</p>
+                                    <p class="stat-label text-muted">Reseñas</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (user.tipoUser !== 'ADMIN') {
+        <div class="col-md-8">
+            
+          <p>No hay resenias </p>
+        </div>
+        }  
+    
+    </div>
+
+    @if (authSer.isAdmin() && !viendoMiPerfil) {
+        <div class="mt-4 text-center">
+            <button class="btn btn-outline-secondary" routerLink="/usuarios/listado">
+                <i class="bi bi-arrow-left"></i> Volver al Listado
+            </button>
+        </div>
+    }
+
+    @if (modalVisible) {
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ modalTitulo }}</h5>
+                    <button type="button" class="btn-close" (click)="modalVisible = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="white-space: pre-line;">{{ modalMensaje }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="modalVisible = false">Cancelar</button>
+                    <button type="button" class="btn" 
+                        [ngClass]="{
+                            'btn-danger': accionPendiente?.includes('eliminar'),
+                            'btn-warning': accionPendiente?.includes('desactivar') || accionPendiente?.includes('inactivar'),
+                            'btn-success': accionPendiente?.includes('alta')
+                        }" 
+                        (click)="ejecutarAccionConfirmada()">
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+</div>
+} @else {
+    <div class="text-center mt-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Cargando perfil...</p>
+    </div>
+}
+
+<input type="file" id="file-selector" style="display: none;" (change)="onFileSelected($event)">
+
+

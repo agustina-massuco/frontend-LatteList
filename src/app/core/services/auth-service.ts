@@ -88,7 +88,7 @@ export class AuthService {
         }),
         catchError(error => {
            console.error('Error login back:', error);
-           return throwError(() => new Error('Credenciales inválidas'));
+           return throwError(() => error); 
         })
       );
   }

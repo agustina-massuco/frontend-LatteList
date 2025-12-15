@@ -6,6 +6,7 @@ import User from '../../model/User';
 import { catchError, EMPTY, of, switchMap, tap, throwError } from 'rxjs';
 import { ModalDrawerComponent } from '../../../../shared/modal-drawer/modal-drawer.component';
 import { ForgotPassword } from '../forgot-password/forgot-password';
+import { UserService } from '../../service/user-service';
 
 
 @Component({
@@ -20,13 +21,17 @@ export class UserLogin implements OnInit {
   mensajeError: string | null = null;
   isProcessing: boolean = false;
   mostrarClave: boolean = false;
+  usuarioParaReactivar: User | null = null;
 
 
   showForgotModal = signal<boolean>(false);
+  showReactivateModal = signal<boolean>(false);
+
 
   constructor(
     public fb: FormBuilder,
     private authSer: AuthService,
+    private userSer: UserService,
     private router: Router
   ) { }
 
@@ -61,23 +66,17 @@ export class UserLogin implements OnInit {
                 return of(user);
 
             case 'INACTIVO':
-               /* this.mensajeError = 'Tu cuenta estaba inactiva. Reactivando tu perfil...';
-              
-                return this.userSer.darDeAltaUsuarioCompleto(user.id!).pipe(
-                    tap(reactivatedUser => {
-                        this.mensajeError = '¡Reactivación exitosa!';
-                        this.authSer.actualizarToken(reactivatedUser); 
-                    }),
-                    catchError(e => {
-                        console.error('Error reactivando:', e);
-                        return throwError(() => new Error('REACTIVACION_FALLIDA'));
-                    })
-                );*/
+               return throwError(() => new Error('CUENTA_SUSPENDIDA'));
 
             case 'DESACTIVADO':
+
+                this.usuarioParaReactivar = user;
+                this.showReactivateModal.set(true); 
+                this.isProcessing = false; 
+                return EMPTY; 
+
             case 'ELIMINADO':
-                // Bloqueo total
-             //   return throwError(() => new Error('CUENTA_BLOQUEADA'));
+                return throwError(() => new Error('CUENTA_ELIMINADA'));
 
             default:
                 return throwError(() => new Error('ESTADO_DESCONOCIDO'));
@@ -94,21 +93,65 @@ export class UserLogin implements OnInit {
       catchError((e) => {
         this.isProcessing = false;
         console.error('Error en proceso de login:', e);
-
-        let msg = 'Error desconocido durante el inicio de sesión.';
-
-        if (e.message === 'Credenciales inválidas') {
-            msg = 'Credenciales inválidas. Verifica email y contraseña.';
-        } else if (e.message === 'CUENTA_BLOQUEADA') {
-            msg = 'Tu cuenta ha sido suspendida o eliminada permanentemente. Contacta al soporte.';
-        } else if (e.message === 'REACTIVACION_FALLIDA') {
-            msg = 'Hubo un error al intentar reactivar tu cuenta. Intenta más tarde.';
-        }
-
-        this.mensajeError = msg;
+        this.manejarErroresLogin(e); 
         return EMPTY; 
-      })
+})
     ).subscribe();
+  }
+
+  confirmarReactivacion() {
+    if (!this.usuarioParaReactivar?.id) return;
+
+    this.isProcessing = true; 
+
+    this.userSer.cambiarEstadoUsuario(this.usuarioParaReactivar.id, 'ACTIVO').subscribe({
+      next: () => {
+        console.log("Cuenta reactivada con éxito");
+        this.showReactivateModal.set(false);
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error("Error al reactivar", err);
+        this.mensajeError = "No se pudo reactivar la cuenta. Intenta más tarde.";
+        this.isProcessing = false;
+        this.showReactivateModal.set(false);
+      }
+    });
+  }
+
+  cancelarReactivacion() {
+    this.showReactivateModal.set(false);
+    this.usuarioParaReactivar = null;
+    this.authSer.logout(); 
+    this.loginForm.reset();
+  }
+
+  private manejarErroresLogin(e: any) {
+    if (e.message === 'CUENTA_SUSPENDIDA') {
+        this.mensajeError = 'Tu cuenta ha sido suspendida por un administrador debido al incumplimiento de normas.';
+        return;
+    }
+    if (e.message === 'CUENTA_ELIMINADA') {
+        this.mensajeError = 'Esta cuenta fue eliminada permanentemente y no puede recuperarse.';
+        return;
+    }
+
+    if (e.status === 403) {
+       
+        const msgBackend = typeof e.error === 'string' ? e.error : e.error?.message;
+        
+        if (msgBackend && (msgBackend.includes('suspendida') || msgBackend.includes('bloqueada'))) {
+             this.mensajeError = 'Tu cuenta ha sido suspendida por un administrador.';
+        } else {
+             this.mensajeError = 'Credenciales inválidas. Verifica email y contraseña.';
+        }
+    } 
+    else if (e.status === 401 || e.message === 'Credenciales inválidas') {
+        this.mensajeError = 'Credenciales inválidas. Verifica email y contraseña.';
+    } 
+    else {
+        this.mensajeError = 'Error desconocido durante el inicio de sesión.';
+    }
   }
 
 

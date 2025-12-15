@@ -130,7 +130,7 @@ export class UserRegistro implements OnInit {
         this.toast.success('Perfil actualizado con éxito.');
         this.authSer.actualizarToken(userActu); 
         this.form.markAsPristine();
-        this.router.navigate(['/auth/perfil']);
+        this.router.navigate(['/usuarios/perfil']);
       },
       error: (e) => {
         this.toast.error(e.message || 'Error al actualizar perfil');
@@ -281,8 +281,8 @@ export class UserRegistro implements OnInit {
   }
 
   volver(): void {
-    if (this.mode === 'edit') this.router.navigate(['/auth/perfil']);
-    else if (this.mode === 'admin') this.router.navigate(['/admin/listado']);
+    if (this.mode === 'edit') this.router.navigate(['/usuarios/perfil']);
+    else if (this.mode === 'admin') this.router.navigate(['/usuarios/listado']);
     else this.router.navigate(['/home']);
   }
 

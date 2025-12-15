@@ -157,7 +157,7 @@ constructor(
 
   onUserClick(userItem: any) {
     if (userItem.id) {
-      this.router.navigate(['/auth/perfil', userItem.id]);
+      this.router.navigate(['/usuarios/perfil', userItem.id]);
     }
   }
 

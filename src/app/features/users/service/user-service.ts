@@ -1,7 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import User from '../model/User';
+import User, { EstadoUsuario } from '../model/User';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -65,7 +67,7 @@ export class UserService {
   }
 
   deleteUser(id: number | string): Observable<void> {
-    return this.http.delete<void>(`${this.userUrl}/${id}`)
+    return this.http.patch<void>(`${this.userUrl}/${id}/estado`, { estado: 'ELIMINADO' })
       .pipe(
         tap(() => {
           this.users.update(list => list.filter(user => user.id != id));
@@ -85,6 +87,17 @@ export class UserService {
         catchError(this.manejarError)
       );
   }
+  cambiarEstadoUsuario(id: number | string, nuevoEstado: EstadoUsuario): Observable<void> {
+      return this.http.patch<void>(`${this.userUrl}/${id}/estado`, { estado: nuevoEstado })
+        .pipe(
+            tap(() => {
+                this.users.update(list => 
+                    list.map(u => u.id == id ? { ...u, estado: nuevoEstado } : u)
+                );
+            }),
+            catchError(this.manejarError)
+        );
+  }
 
   verificarEmailExistente(email: string): Observable<boolean> {
     return this.http.get<boolean>(`${this.authUrl}/check-email?email=${email}`);
@@ -100,11 +113,7 @@ export class UserService {
       );
   }
 
-  darBajaTemporal(id: number | string): Observable<void> {
-      return this.http.patch<void>(`${this.userUrl}/${id}/estado`, { estado: 'INACTIVO' })
-        .pipe(catchError(this.manejarError));
-  }
-
+  
   manejarError(error: HttpErrorResponse) {
     let mensaje = 'Ocurrió un error inesperado. Intente de nuevo.';
     if (error.status === 0) mensaje = 'Error de conexión con el servidor.';

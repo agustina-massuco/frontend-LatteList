@@ -104,3 +104,45 @@
 
     </app-modal-drawer>
 </div>
+
+
+<div class="modal-auth">
+    <app-modal-drawer 
+        [isOpen]="showForgotModal()" 
+        [title]="'Recuperar Contraseña'" 
+        (close)="showForgotModal.set(false)">
+
+        <app-forgot-password (close)="showForgotModal.set(false)"></app-forgot-password>
+
+    </app-modal-drawer>
+</div>
+
+@if (showReactivateModal()) {
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow">
+                <div class="modal-header bg-warning text-dark border-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Cuenta Desactivada
+                    </h5>
+                    <button type="button" class="btn-close" (click)="cancelarReactivacion()"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <h4 class="mb-3">¡Bienvenido de vuelta, {{usuarioParaReactivar?.nombre}}!</h4>
+                    <p class="text-muted">
+                        Notamos que habías desactivado tu cuenta anteriormente. 
+                        ¿Te gustaría <strong>reactivarla</strong> ahora para acceder a todo tu contenido?
+                    </p>
+                </div>
+                <div class="modal-footer justify-content-center border-0 pb-4">
+                    <button type="button" class="btn btn-outline-secondary px-4" (click)="cancelarReactivacion()">
+                        No, salir
+                    </button>
+                    <button type="button" class="btn btn-primary px-4 fw-bold" (click)="confirmarReactivacion()">
+                        Sí, reactivar mi cuenta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
