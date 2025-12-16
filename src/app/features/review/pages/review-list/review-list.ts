@@ -202,127 +202,80 @@ export class ReviewList implements OnInit, OnChanges {
     }
 
 
-    cargarDataInicial() {
-  this.loading = true;
-  this.error = '';
+cargarDataInicial() {
+        this.loading = true;
+        this.error = '';
 
-  const simulatedUsers: User[] = [
-    { id: 1, nombre: 'User', apellido: 'Test', email: 'test@correo.com', estado: 'ACTIVO', fotoPerfil: '', tipoUser: 'CLIENTE', password: '' },
-    { id: 2, nombre: 'Test', apellido: '', email: 'admintest@correo.com', estado: 'ACTIVO', fotoPerfil: '', tipoUser: 'ADMIN', password: '' },
-    { id: 3, nombre: 'Admin', apellido: '', email: 'admin@lattelist.com', estado: 'ACTIVO', fotoPerfil: '', tipoUser: 'ADMIN', password: '' },
-  ];
+        // ❌ ELIMINAMOS COMPLETAMENTE EL BLOQUE DE USUARIOS SIMULADOS
+        /*
+        const simulatedUsers: User[] = [
+          { id: 1, nombre: 'User', apellido: 'Test', email: 'test@correo.com', estado: 'ACTIVO', fotoPerfil: '', tipoUser: 'CLIENTE', password: '' },
+          //...
+        ];
+        const usersActivos = simulatedUsers.filter(u => u.estado === 'ACTIVO');
+        this.userMap = new Map(usersActivos.map(u => [u.id, u]));
+        */
 
-  const usersActivos = simulatedUsers.filter(u => u.estado === 'ACTIVO');
-  this.userMap = new Map(usersActivos.map(u => [u.id, u]));
+        const incluirInactivas = this.auth.isAdmin();
+        const idNum = Number(this.cafeId);
 
-  const incluirInactivas = this.auth.isAdmin();
-  const idNum = Number(this.cafeId);
-
-  if (isNaN(idNum) || idNum === 0) {
-    this.error = 'ID inválido.';
-    this.loading = false;
-    return;
-  }
-
-  let reviewObservable: Observable<Review[]>;
-
-  if (this.modoVista === 'cafe') {
-    reviewObservable = this.reviewService.getByCafe(idNum, incluirInactivas);
-  } else {
-    reviewObservable = this.reviewService.getByUsuario(idNum, incluirInactivas);
-  }
-
-reviewObservable.subscribe({
-  next: (reviews) => {
-        console.log('REVIEWS RAW DEL BACK:', reviews);
-
-    const reviewsValidas: Review[] = reviews.map(r => ({
-      id: r.id,
-      puntuacion: r.puntuacion,
-      comentario: r.comentario,
-      fecha: r.fecha,
-      userId: r.userId,
-      cafeId: r.cafeId,
-      etiquetas: r.etiquetas ?? [],
-      costoPromedio: r.costoPromedio ?? null,
-      estado: r.estado,
-      fotos: r.fotos ?? [],
-      likes: r.likes ?? 0,
-      dislikes: r.dislikes ?? 0,
-      reaccionUsuario: r.reaccionUsuario ?? null
-    })).filter(r => r.estado !== this.ESTADO_ELIMINADA);
-
-    if (this.modoVista === 'cafe') {
-      this.reviewsCafeSignal.set(reviewsValidas);
-    } else {
-      this.reviewsUsuarioSignal.set(reviewsValidas);
-    }
-    this.loading = false;
-  },
-  error: (err) => {
-    this.error = `Error al cargar reseñas del ${this.modoVista}: ${err.message || 'Desconocido'}`;
-    console.error(err);
-    this.loading = false;
-  }
-});
-
-}
-
-
- /*  cargarDataInicial() {
-  this.loading = true;
-  this.error = '';
-
-  this.userService.getAllUsers().subscribe({
-    next: (usuarios) => {
-      const usersActivos = usuarios.filter(u => u.estado === 'ACTIVO');
-
-      this.userMap = new Map(usersActivos.map(u => [u.id, u]));
-
-      const incluirInactivas = this.auth.isAdmin();
-      const idNum = Number(this.cafeId);
-
-      if (isNaN(idNum) || idNum === 0) {
-        this.error = 'ID inválido.';
-        this.loading = false;
-        return;
-      }
-
-      let reviewObservable: Observable<Review[]>;
-
-      if (this.modoVista === 'cafe') {
-        reviewObservable = this.reviewService.getByCafe(idNum, incluirInactivas);
-      } else {
-        reviewObservable = this.reviewService.getByUsuario(idNum, incluirInactivas);
-      }
-
-      reviewObservable.subscribe({
-        next: (reviews) => {
-          const reviewsValidas = reviews.filter(r => r.estado !== this.ESTADO_ELIMINADA);
-
-          if (this.modoVista === 'cafe') {
-            this.reviewsCafeSignal.set(reviewsValidas);
-          } else {
-            this.reviewsUsuarioSignal.set(reviewsValidas);
-          }
-
-          this.loading = false;
-        },
-        error: (err) => {
-          this.error = `Error al cargar reseñas del ${this.modoVista}: ${err.message || 'Desconocido'}`;
-          console.error(err);
-          this.loading = false;
+        if (isNaN(idNum) || idNum === 0) {
+            this.error = 'ID inválido.';
+            this.loading = false;
+            return;
         }
-      });
-    },
-    error: (err) => {
-      this.error = `Error al cargar usuarios: ${err.message || 'Desconocido'}`;
-      console.error(err);
-      this.loading = false;
-    }
-  });
-}*/
 
+        let reviewObservable: Observable<Review[]>;
+
+        if (this.modoVista === 'cafe') {
+            // Asume que getByCafe devuelve el objeto Review con userNombre, userApellido, etc.
+            reviewObservable = this.reviewService.getByCafe(idNum, incluirInactivas);
+        } else {
+            // Asume que getByUsuario devuelve el objeto Review con userNombre, userApellido, etc.
+            reviewObservable = this.reviewService.getByUsuario(idNum, incluirInactivas);
+        }
+
+        reviewObservable.subscribe({
+            next: (reviews) => {
+                const reviewsValidas: Review[] = reviews.map(r => {
+                    // Ya NO BUSCAMOS EN userMap. Usamos los datos que vienen en 'r'.
+                    
+                    // Solo usamos los valores por defecto si el backend no los trae:
+                    const nombre = r.userNombre ?? 'Usuario';
+                    const apellido = r.userApellido ?? '';
+                    const foto = r.userFotoPerfil || this.defaultProfileImage;
+
+                    return {
+                        ...r,
+                        etiquetas: r.etiquetas ?? [],
+                        fotos: r.fotos ?? [],
+                        likes: r.likes ?? 0,
+                        dislikes: r.dislikes ?? 0,
+                        reaccionUsuario: r.reaccionUsuario ?? null,
+
+                        // Asignamos el valor que vino de la API o el default:
+                        userNombre: nombre,
+                        userApellido: apellido,
+                        userFotoPerfil: foto 
+                    };
+                }).filter(r => r.estado !== this.ESTADO_ELIMINADA);
+
+
+                if (this.modoVista === 'cafe') {
+                    this.reviewsCafeSignal.set(reviewsValidas);
+                } else {
+                    this.reviewsUsuarioSignal.set(reviewsValidas);
+                }
+                this.loading = false;
+            },
+            error: (err) => {
+                this.error = `Error al cargar reseñas del ${this.modoVista}: ${err.message || 'Desconocido'}`;
+                console.error(err);
+                this.loading = false;
+            }
+        });
+
+    }
 
     getFotoPerfil(user: User): string {
         if (!user.fotoPerfil || user.fotoPerfil.trim() === '') {
@@ -352,10 +305,6 @@ reviewObservable.subscribe({
     esPropietaria(review: Review): boolean {
         const user = this.auth.getUserFromToken();
         return user ? review.userId === Number(user.id) : false;
-    }
-
-    getUserData(userId: number): User | undefined {
-        return this.userMap.get(userId);
     }
 
     getCafeName(cafeId: number): string {

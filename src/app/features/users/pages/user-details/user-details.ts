@@ -11,7 +11,7 @@ import User from '../../model/User';
 import Review from '../../../review/model/Review';
 import Cafe from '../../../cafes/model/CafeModel';
 import { ReviewService } from '../../../review/service/review-service';
-import { CafeService } from '../../../cafes/service/cafe-service';
+import { CafeService } from '../../../cafes/service/cafeService';
 
 
 
@@ -108,7 +108,7 @@ export class UserDetails implements OnInit {
     const userIdNum = Number(userId);
 
     forkJoin({
-        cafes: this.cafeSer.getCafes(),
+        cafes: this.cafeSer.getAllCafes(),
         reviews: this.reviewSer.getByUsuario(userIdNum, soyAdmin) 
     }).subscribe({
       next: ({ cafes, reviews }) => {

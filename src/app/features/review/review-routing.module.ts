@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ReviewForm } from './pages/review-form/review-form';
+import { ReviewList } from './pages/review-list/review-list';
 
 const routes: Routes = [
- //{ path: '', component: ReviewList }, 
-  //{ path: 'crear', component: ReviewForm },   
+ { path: '', component: ReviewList }, 
+  { path: 'crear', component: ReviewForm },   
 ];
 
 @NgModule({

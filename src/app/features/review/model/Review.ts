@@ -6,7 +6,12 @@ export default interface Review {
   puntuacion: number;
   comentario: string;
   fecha: string;
+
   userId: number;
+  userNombre?: string;
+  userApellido?:string;
+  userFotoPerfil?:string;
+  
   cafeId: number;
   etiquetas: string[];
   costoPromedio: 'BARATO' | 'MEDIO' | 'CARO' | null;
