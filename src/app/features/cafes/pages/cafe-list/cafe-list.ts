@@ -9,6 +9,8 @@ import { ModalDrawerComponent } from '../../../../shared/modal-drawer/modal-draw
 import { InputSearchComponent } from '../../../../shared/input-search/input-search';
 import Cafe from '../../model/CafeModel';
 import { CafeService } from '../../service/cafeService';
+import { ListService } from '../../../lista/service/list-service';
+import { ListButtonComponent } from '../../../../shared/list-button/list-button.component';
 
 @Component({
   selector: 'app-cafe-list',
@@ -21,7 +23,8 @@ import { CafeService } from '../../service/cafeService';
     SwitchComponent,
     ListItemComponent,
     PaginatorComponent,
-    ModalDrawerComponent
+    ModalDrawerComponent,
+    ListButtonComponent
   ],
   templateUrl: './cafe-list.html',
   styleUrls: ['./cafe-list.css'],
@@ -61,7 +64,6 @@ export class CafeListComponent implements OnInit {
     }));
   });
 
- 
 
   isModalOpen = signal(false);
   selectedCafe = signal<any | null>(null);
@@ -75,7 +77,9 @@ export class CafeListComponent implements OnInit {
 
   constructor(
     private cafeService: CafeService,
-    private router: Router
+    private router: Router,
+    private listService: ListService
+
     
   ) {
     effect(() => {
@@ -179,15 +183,6 @@ export class CafeListComponent implements OnInit {
   }
 
 
-  closeModal(): void {
-    this.isModalOpen.set(false);
-    this.selectedCafe.set(null);
-  }
-
-  onBookmarkClick(cafe: any): void {
-    this.selectedCafe.set(cafe);
-    this.isModalOpen.set(true);
-  }
 
  
   ngOnInit(): void {
@@ -198,19 +193,136 @@ export class CafeListComponent implements OnInit {
 
 
   //LISTAS. 
-  createNewList(): void {
-    console.log('TODO: createNewList');
-  }
-
-  cancelCreateList(): void {
-    this.showCreateForm.set(false);
-  }
-
-  saveNewList(): void {
-    console.log('TODO: saveNewList');
-  }
-
-  toggleCafeInList(listId: number): void {
-    console.log('TODO: toggleCafeInList', listId);
-  }
+createNewList(): void {
+  this.showCreateForm.set(true);
 }
+
+saveNewList(): void {
+  const nombre = this.newListName().trim();
+  if (!nombre) return;
+
+  this.creatingList.set(true);
+
+  this.listService.postList(nombre).subscribe({
+    next: () => {
+      this.newListName.set('');
+      this.showCreateForm.set(false);
+      this.creatingList.set(false);
+      this.loadUserLists();
+    },
+    error: () => {
+      this.creatingList.set(false);
+    }
+  });
+}
+
+toggleCafeInList(listId: number): void {
+  const cafe = this.selectedCafe();
+  if (!cafe) return;
+
+  const list = this.userLists().find(l => l.id === listId);
+  if (!list) return;
+
+  if (!list.idCafes) list.idCafes = [];
+
+  const yaEsta = list.idCafes.includes(cafe.id);
+
+  if (yaEsta) {
+    list.idCafes = list.idCafes.filter((id: number) => id !== cafe.id);
+  } else {
+    list.idCafes.push(cafe.id);
+  }
+
+  this.userLists.update(lists => [...lists]);
+  this.mapUserListItems();
+
+  this.listService.toggleCafe(listId, cafe.id, !yaEsta).subscribe({
+    next: () => {},
+    error: (err) => {
+      console.error('Error al actualizar lista', err);
+    }
+  });
+}
+
+
+
+onBookmarkClick(cafe: any): void {
+  this.selectedCafe.set(cafe);
+  this.isModalOpen.set(true);
+  this.loadUserLists();
+}
+
+loadUserLists(): void {
+  this.loadingLists.set(true);
+
+  this.listService.getUserLists().subscribe({
+    next: (lists) => {
+      this.userLists.set(lists);
+      this.mapUserListItems();
+      this.loadingLists.set(false);
+    },
+    error: () => {
+      this.loadingLists.set(false);
+    }
+  });
+}
+
+
+
+private mapUserListItems(): void {
+  const cafe = this.selectedCafe();
+  if (!cafe) return;
+
+  const items = this.userLists().map(list => {
+    const isAdded = list.idCafes.includes(cafe.id);
+
+    return {
+      listId: list.id,
+      item: {
+        title: list.nombre,
+        description: `${isAdded ? 1 : 0} café${isAdded ? '' : 's'}`,
+        action: isAdded ? '-' : '+',
+        inactive: false,
+        isAdded,
+        count: isAdded ? 1 : 0
+      }
+    };
+  });
+
+  this.userListItems.set(items);
+}
+
+// Update styles and logic for list buttons
+private updateListButtonStyles(): void {
+  const cafe = this.selectedCafe();
+  if (!cafe) return;
+
+  this.userListItems.update(items => {
+    return items.map(item => {
+      const isAdded = item.listIdCafes.includes(cafe.id);
+      return {
+        ...item,
+        action: isAdded ? 'MENOS' : '+',
+        description: `${isAdded ? 1 : 0} café${isAdded ? '' : 's'}`,
+        style: isAdded ? 'darker-background' : 'lighter-background'
+      };
+    });
+  });
+}
+
+ cancelCreateList(): void {
+  this.showCreateForm.set(false);
+  this.newListName.set('');
+}
+
+
+  closeModal(): void {
+  this.isModalOpen.set(false);
+  this.selectedCafe.set(null);
+  this.userListItems.set([]);
+  this.showCreateForm.set(false);
+}
+
+}
+
+

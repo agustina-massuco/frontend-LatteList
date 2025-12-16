@@ -4,11 +4,11 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import List from '../../model/List';
-import { CafeService } from '../../../cafes/service/cafe-service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ModalDrawerComponent } from '../../../../shared/modal-drawer/modal-drawer.component';
 import { ConfirmacionModal } from '../../../../shared/confirmacion-modal/confirmacion-modal';
 import Cafe from '../../../cafes/model/CafeModel';
+import { CafeService } from '../../../cafes/service/cafeService';
 
 @Component({
   selector: 'app-list-of-list',
@@ -66,7 +66,7 @@ export class ListOfList implements OnInit {
     
     this.userLists = this.listSer.userLists;
   
-    this.cafeSer.getCafes().subscribe({
+    this.cafeSer.getAllCafes().subscribe({
       next: (cafes: Cafe[]) => {
         const map = new Map<string, string>();
         cafes.forEach(c => {

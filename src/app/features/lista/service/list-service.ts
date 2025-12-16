@@ -35,4 +35,24 @@ export class ListService {
       })
     );
   }
+
+toggleCafe(
+  listId: number,
+  cafeId: number,
+  agregar: boolean
+): Observable<void> {
+  const url = `${this.apiUrl}/${listId}/cafes/${cafeId}`;
+
+  const request$ = agregar
+    ? this.http.post<void>(url, {})
+    : this.http.delete<void>(url);
+
+  return request$.pipe(
+    tap(() => {
+      this.getUserLists().subscribe();
+    })
+  );
+}
+
+
 }
