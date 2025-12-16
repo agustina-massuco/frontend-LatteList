@@ -275,16 +275,17 @@ private mapUserListItems(): void {
 
   const items = this.userLists().map(list => {
     const isAdded = list.idCafes.includes(cafe.id);
+    const totalCafes = list.idCafes.length; // Count total cafes in the list
 
     return {
       listId: list.id,
       item: {
         title: list.nombre,
-        description: `${isAdded ? 1 : 0} café${isAdded ? '' : 's'}`,
+        description: `${totalCafes} café${totalCafes !== 1 ? 's' : ''}`, // Updated to reflect total count
         action: isAdded ? '-' : '+',
         inactive: false,
         isAdded,
-        count: isAdded ? 1 : 0
+        count: totalCafes // Updated to reflect total count
       }
     };
   });

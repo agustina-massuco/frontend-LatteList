@@ -13,6 +13,7 @@ import Review from '../../../review/model/Review';
 import ReviewRequest from '../../../review/model/ReviewRequest';
 import Cafe from '../../model/CafeModel';
 import { COSTOS_PROMEDIO } from '../../../../shared/constantes/costo-promedio';
+import { ListService } from '../../../lista/service/list-service';
 
 interface CafeDetailDTO {
   id: number;
@@ -96,17 +97,24 @@ export class CafeDetailComponent implements OnInit {
       attributes.push({ text: 'Exterior', icon: '🌳', type: 'default' });
     }
 
-   if (cafeData.abiertoAhora === true || cafeData.abiertoAhora === false) {
-  attributes.push({
-    text: cafeData.abiertoAhora ? 'Abierto' : 'Cerrado',
-    icon: cafeData.abiertoAhora ? '✓' : '✕',
-    type: cafeData.abiertoAhora ? 'open' : 'closed'
-  });
+   if (cafeData.openingHours?.trim()) {
+  if (cafeData.abiertoAhora !== undefined) {
+    attributes.push({
+      text: cafeData.abiertoAhora ? 'Abierto' : 'Cerrado',
+      icon: cafeData.abiertoAhora ? '✓' : '✕',
+      type: cafeData.abiertoAhora ? 'open' : 'closed'
+    });
+  }
 } else {
-  attributes.push({ text: 'Sin horario', icon: 'ℹ', type: 'info' });
+  attributes.push({
+    text: 'No hay información sobre el horario de apertura',
+    icon: 'ℹ',
+    type: 'info'
+  });
 }
 
-console.log('abiertoAhora:', cafeData.abiertoAhora);
+
+
 
     return attributes;
   });
@@ -122,14 +130,24 @@ console.log('abiertoAhora:', cafeData.abiertoAhora);
 
   userLists = signal<any[]>([]);
   userListItems = computed(() => {
-    return this.userLists().map(list => ({
-      listId: list.id,
-      item: {
-        title: list.nombre,
-        description: `${list.cafes?.length || 0} café${list.cafes?.length !== 1 ? 's' : ''}`,
-        action: '🔖'
-      }
-    }));
+    return this.userLists().map(list => {
+      // Soportar ambos formatos: `cafes` (array de objetos) o `idCafes` (array de ids)
+      const cafesArr = list.cafes && Array.isArray(list.cafes)
+        ? list.cafes
+        : (Array.isArray(list.idCafes) ? list.idCafes.map((id: any) => ({ id })) : []);
+
+      const isAdded = cafesArr.some((cafe: Cafe) => Number(cafe.id) === this.cafeId);
+
+      return {
+        listId: list.id,
+        item: {
+          title: list.nombre,
+          description: `${cafesArr.length} café${cafesArr.length !== 1 ? 's' : ''}`,
+          action: isAdded ? '-' : '+',
+          isAdded
+        }
+      };
+    });
   });
 
   formVisible = false;
@@ -144,7 +162,8 @@ console.log('abiertoAhora:', cafeData.abiertoAhora);
   constructor(
     private cafeService: CafeService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private listasService: ListService
   ) {}
 
   ngOnInit(): void {
@@ -221,49 +240,127 @@ getPrecioSimbolo(): string {
     return direccion.split(',')[0].trim();
   }
 
-  getHorarioBonito(cafe: CafeDetailDTO): string {
-    if (!cafe.openingHours) return 'Sin horario';
-    
-    const partes = cafe.openingHours.split(';')[0]; 
-    return partes.trim();
-  }
+ getHorarioBonito(cafe: CafeDetailDTO): string {
+  if (!cafe.openingHours) return 'Sin horario';
+
+  const diasMap: Record<string, string> = {
+    Mo: 'Lunes',
+    Tu: 'Martes',
+    We: 'Miércoles',
+    Th: 'Jueves',
+    Fr: 'Viernes',
+    Sa: 'Sábado',
+    Su: 'Domingo',
+  };
+
+  const horario = cafe.openingHours.split(';')[0].trim();
+
+  const [dias, horas] = horario.split(' ');
+
+  const diasBonitos = dias
+    .split('-')
+    .map(d => diasMap[d] ?? d)
+    .join(' a ');
+
+  return `${diasBonitos} ${horas}`;
+}
 
   volver(): void {
    this.router.navigate(['/cafes']);
   }
 
+
  
     //list 
 
-  openListModal(): void {
-    this.isModalOpen.set(true);
+openListModal(): void {
+  this.isModalOpen.set(true);
+  this.cargarListas();
+}
+
+cargarListas(): void {
+  this.loadingLists.set(true);
+
+  this.listasService.getUserLists().subscribe({
+    next: listas => {
+      this.userLists.set(listas);
+      this.loadingLists.set(false);
+    },
+    error: err => {
+      console.error(err);
+      this.loadingLists.set(false);
+    }
+  });
+}
+
+closeModal(): void {
+  this.isModalOpen.set(false);
+}
+
+createNewList(): void {
+  this.showCreateForm.set(true);
+}
+
+cancelCreateList(): void {
+  this.showCreateForm.set(false);
+  this.newListName.set('');
+}
+
+
+saveNewList(): void {
+  const nombre = this.newListName().trim();
+  if (!nombre) return;
+
+  this.creatingList.set(true);
+
+  this.listasService.postList(nombre).subscribe({
+    next: () => {
+      this.creatingList.set(false);
+      this.showCreateForm.set(false);
+      this.newListName.set('');
+      this.cargarListas();
+    },
+    error: err => {
+      console.error(err);
+      this.creatingList.set(false);
+    }
+  });
+}
+
+
+toggleCafeInList(listId: number): void {
+  const cafeId = this.cafeIdActual;
+
+  const lista = this.userLists().find(l => l.id === listId);
+  if (!lista) return;
+
+  // Inicializar cafés si es undefined
+  if (!lista.cafes) lista.cafes = [];
+
+  const yaEsta = lista.cafes.some((c: { id: number }) => c.id === cafeId);
+
+  if (yaEsta) {
+    lista.cafes = lista.cafes.filter((c: { id: number }) => c.id !== cafeId);
+  } else {
+    lista.cafes.push({ id: cafeId });
   }
 
-  closeModal(): void {
-    this.isModalOpen.set(false);
-  }
+  this.userLists.update(lists => [...lists]);
 
-  createNewList(): void {
-    this.showCreateForm.set(true);
-  }
+  this.listasService
+    .toggleCafe(listId, cafeId, !yaEsta)
+    .subscribe({
+      next: () => {},
+      error: err => console.error('Error al actualizar la lista de cafés', err)
+    });
+}
 
-  cancelCreateList(): void {
-    this.showCreateForm.set(false);
-    this.newListName.set('');
-  }
 
-  saveNewList(): void {
-    console.log('TODO: saveNewList');
-  }
-
-  toggleCafeInList(listId: number): void {
-    console.log('TODO: toggleCafeInList', listId);
-  }
 
   /////////////////////////////////////////////////////////////////
 
 
- mostrarFormulario(cafe: Cafe | undefined): void {
+ mostrarFormulario(cafe: Cafe): void {
     if (!cafe) {
       console.error('No se pudo obtener la información del café para crear la reseña.');
       return;
