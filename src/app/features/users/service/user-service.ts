@@ -60,11 +60,11 @@ export class UserService {
     );
   }
 
-  contarAdminsActivos(): Observable<number> {
+ /* contarAdminsActivos(): Observable<number> {
     return this.http.get<number>(`${this.userUrl}/count-admins`).pipe(
         catchError(this.manejarError)
     );
-  }
+  }*/
 
   deleteUser(id: number | string): Observable<void> {
     return this.http.patch<void>(`${this.userUrl}/${id}/estado`, { estado: 'ELIMINADO' })
@@ -87,6 +87,7 @@ export class UserService {
         catchError(this.manejarError)
       );
   }
+
   cambiarEstadoUsuario(id: number | string, nuevoEstado: EstadoUsuario): Observable<void> {
       return this.http.patch<void>(`${this.userUrl}/${id}/estado`, { estado: nuevoEstado })
         .pipe(
@@ -97,6 +98,11 @@ export class UserService {
             }),
             catchError(this.manejarError)
         );
+  }
+
+  changePassword(actual: string, nueva: string): Observable<void> {
+    return this.http.patch<void>(`${this.userUrl}/me/password`, { actual, nueva })
+      .pipe(catchError(this.manejarError));
   }
 
   verificarEmailExistente(email: string): Observable<boolean> {
@@ -115,13 +121,23 @@ export class UserService {
 
   
   manejarError(error: HttpErrorResponse) {
+    
+    if (error.error && error.error.message) {
+        return throwError(() => error);
+    }
+
     let mensaje = 'Ocurrió un error inesperado. Intente de nuevo.';
+    
     if (error.status === 0) mensaje = 'Error de conexión con el servidor.';
     else if (error.status === 404) mensaje = 'Usuario no encontrado.';
     else if (error.status === 500) mensaje = 'Error interno del servidor.';
     else if (error.status === 403) mensaje = 'Acceso denegado.';
     
     console.error(`Error ${error.status}: ${error.message}`);
-    return throwError(() => new Error(mensaje));
+    
+    return throwError(() => ({ 
+        status: error.status,
+        error: { message: mensaje } 
+    }));
   }
 }

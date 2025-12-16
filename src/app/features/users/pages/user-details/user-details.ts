@@ -84,7 +84,7 @@ export class UserDetails implements OnInit {
         const loggedUser = this.authSer.getUserFromToken();
         this.viendoMiPerfil = loggedUser ? loggedUser.id.toString() === userId.toString() : false;
         
-        this.verificarAdminUnico(); 
+      //  this.verificarAdminUnico(); 
         
         if (this.user.tipoUser === 'ADMIN') {
             this.loadingReviews = false;
@@ -139,7 +139,7 @@ export class UserDetails implements OnInit {
   }
 
   confirmarEliminacionPropia() {
-    if (this.validarAdminUnico()) return;
+   // if (this.validarAdminUnico()) return;
     this.modalTitulo = 'Eliminar mi Cuenta Definitivamente';
     this.modalMensaje = 'Acción IRREVERSIBLE. Tus listas se borrarán y tus reseñas desaparecerán.';
     this.accionPendiente = 'eliminar_user';
@@ -213,7 +213,7 @@ export class UserDetails implements OnInit {
     }
   }
 
-  private validarAdminUnico(): boolean {
+ /* private validarAdminUnico(): boolean {
     if (this.user?.tipoUser === 'ADMIN' && this.isOnlyAdmin) {
       this.modalTitulo = 'No permitido';
       this.modalMensaje = 'Eres el único Admin activo. Asigna otro antes de borrarte.';
@@ -221,13 +221,13 @@ export class UserDetails implements OnInit {
       return true;
     }
     return false;
-  }
+  }*/
 
-  private verificarAdminUnico(): void {
+ /* private verificarAdminUnico(): void {
     if (this.user?.tipoUser === 'ADMIN') {
       this.userSer.contarAdminsActivos().subscribe(count => this.isOnlyAdmin = count <= 1);
     }
-  }
+  }*/
 
   private recargarPerfil() {
     if (this.user) this.cargarPerfil(this.user.id.toString());
