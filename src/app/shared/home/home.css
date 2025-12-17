@@ -6,64 +6,47 @@
   font-display: swap; 
 }
 
-/* -------------------------------------- */
-/* 🔑 1. CENTRADO VERTICAL (SIN CAMBIOS) */
-/* -------------------------------------- */
+
 .hero-center-container {
   height: 100vh;
   width: 100vw;
   display: flex;
-  justify-content: flex-start; /* Alineación a la izquierda */
-  align-items: center;        /* Centra el contenedor principal */
+  justify-content: flex-start; 
+  align-items: center;        
 }
 
-/* -------------------------------------- */
-/* 🔑 2. DISPOSICIÓN DEL TEXTO Y DESPLAZAMIENTO */
-/* -------------------------------------- */
 .hero-text-content {
   display: flex;
   flex-direction: row;
-  
-  /* ❌ QUITAR O IGNORAR: align-items: center; aquí para que align-self funcione mejor. 
-     Lo reemplazamos con la alineación individual de cada bloque */
-
-  gap: 12vw; /* Separación horizontal */
+  gap: 12vw; 
   width: 90vw; 
   padding: 0 5vw; 
 }
 
 
-/* -------------------------------------- */
-/* 🔑 4. PROPIEDADES DE LA IMAGEN (PARA SUPERPONER) */
-/* -------------------------------------- */
+
 .coffee-cup-image {
-    position: absolute; /* ¡ESTO LO SACA DEL FLUJO! */
-    
-    /* Centrado manual */
-    top: 70%; /* Lo mueve a la mitad del contenedor verticalmente */
-    left: 50%; /* Lo mueve a la mitad del contenedor horizontalmente */
-    transform: translate(-50%, -50%); /* Ajusta al centro exacto del elemento */
-    
-    /* Define el tamaño de la imagen. */
-    width: 35vw; /* AJUSTA ESTE TAMAÑO para controlar cuánto pisa el texto */
+    position: absolute; 
+    top: 50%;
+    left: 50%; 
+    transform: translate(72%, -50%);
+    width: 35vw;    
     height: auto;
 }
 
-
-
-
 .left-block {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start; 
+    position:absolute;
+    top: 30%; 
+    left: 3%;
     gap: 15px;
     align-self: flex-start; 
     margin-top: -10vh; 
 }
 
 .right-block {
-    align-self: flex-end; 
-    margin-bottom: -10vh;
+    position: absolute;
+    left: 50%;
+    bottom: 7%;
 }
 
 
@@ -71,14 +54,13 @@
   font-family: 'FuentePersonalCafe', sans-serif; 
   color: #2c2c2c;
   text-transform: uppercase;
-  font-weight: 400; 
+  font-weight: 500; 
   white-space: nowrap;
   display: block;
-  font-size: 17vw; 
+  font-size: 18vw; 
   line-height: 0.8; 
   z-index: 10;
 }
-
 
 .discover-button-container {
     position: absolute;
@@ -87,13 +69,12 @@
     z-index: 1000;
 }
 
-
 .discover-button {
     background-color: #79462d; 
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px; /* Bordes redondeados */
+    border-radius: 5px; 
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -102,16 +83,14 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Estilos para el estado hover (al pasar el ratón) */
 .discover-button:hover {
-    background-color: #EEDBB6; /* Ejemplo: Un color un poco más oscuro al pasar el ratón */
-    transform: translateY(-2px); /* Un pequeño levantamiento visual */
+    background-color: #EEDBB6; 
+    transform: translateY(-2px); 
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Estilos para el estado activo (al hacer clic) */
 .discover-button:active {
-    transform: translateY(0); /* Vuelve a su posición original */
+    transform: translateY(0); 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 } 
 
@@ -126,6 +105,6 @@
     .discover-button-container {
         top: 3vh;
         right: 2%;
-        transform: scale(0.9); /* opcional: hacer el botón un poco más pequeño */
+        transform: scale(0.9);
     }
 }
