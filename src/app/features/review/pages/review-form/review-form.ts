@@ -260,13 +260,17 @@ cancelarForm() {
     let observable;
     if (this.reviewEditar) {
     
-      if (this.reviewEditar.id === undefined || this.reviewEditar.id === null) {
-         console.error("Error: ID de reseña no encontrado para editar.");
-         this.mostrarMensaje('Error al editar: ID de reseña no encontrado.');
+      const idEditar = Number(this.reviewEditar.id); 
+      
+      if (!idEditar || isNaN(idEditar)) {
+         console.error("Error: ID de reseña inválido:", this.reviewEditar.id);
+         this.mostrarMensaje('Error: ID inválido.');
          this.modalVisible = false;
          return;
       }
-      observable = this.rs.editarReview(this.reviewEditar.id as number, request);
+      
+      observable = this.rs.editarReview(idEditar, request);
+
     } else {
       console.log('REQUEST:', request);
 

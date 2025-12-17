@@ -1,16 +1,14 @@
-
-import { ChangeDetectorRef, Component, computed, EventEmitter, Input, OnChanges, OnInit, Output, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, EventEmitter, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { catchError, Observable, throwError } from 'rxjs';
 import { ReviewService } from '../../service/review-service';
 import { AuthService } from '../../../../core/services/auth-service';
-import { UserService } from '../../../users/service/user-service';
 import { ConfirmacionModal } from '../../../../shared/confirmacion-modal/confirmacion-modal';
 import Cafe from '../../../cafes/model/CafeModel';
 import Review from '../../model/Review';
-import User, { EstadoUsuario } from '../../../users/model/User';
+import User from '../../../users/model/User';
 import { TipoReaccion } from '../../model/LikeReview';
 
 @Component({
@@ -27,7 +25,7 @@ export class ReviewList implements OnInit, OnChanges {
     readonly ESTADO_ELIMINADA = 'ELIMINADA';
     readonly defaultProfileImage = '/images/grano.png';
 
-    @Input() cafeId!: number;
+    @Input() cafeId: number = 0; 
     @Input() actualizar!: boolean;
     @Input() mostrarBotonAgregar: boolean = false;
     @Input() modoVista: 'cafe' | 'perfil' = 'cafe';
@@ -35,11 +33,12 @@ export class ReviewList implements OnInit, OnChanges {
     @Input() set reviewsUsuario(value: Review[] | undefined) {
         if (value) {
             this.reviewsUsuarioSignal.set([...value]);
+            if (this.modoVista === 'perfil') {
+                this.loading = false;
+            }
         }
     }
-    get reviewsUsuario(): Review[] | undefined {
-        return this.reviewsUsuarioSignal();
-    }
+    
     private reviewsUsuarioSignal = signal<Review[]>([]);
     private reviewsCafeSignal = signal<Review[]>([]);
 
@@ -48,7 +47,7 @@ export class ReviewList implements OnInit, OnChanges {
     @Output() editarResena = new EventEmitter<Review>();
     @Output() resenaEliminada = new EventEmitter<Review>();
     @Output() agregarResenaNueva = new EventEmitter<void>();
-
+    @Output() reseñasActualizadas = new EventEmitter<void>();
 
     etiquetasDisponibles = [
         { value: 'BRUNCH', label: 'Brunch' },
@@ -88,53 +87,50 @@ export class ReviewList implements OnInit, OnChanges {
     loading: boolean = true;
     error: string = '';
     estrellas = [1, 2, 3, 4, 5];
+    
     ordenSeleccionado = signal<'fechaDesc' | 'fechaAsc' | 'puntuacionAlta' | 'puntuacionBaja' | 'misPrimeras'>('fechaDesc');
     filtroActivo = signal<'todos' | 'activas' | 'inactivas'>('todos');
+    
     mensajeTemporal: string = '';
-    @Output() reseñasActualizadas = new EventEmitter<void>();
-
 
     modalVisible: boolean = false;
     modalTitulo: string = '';
     modalMensaje: string = '';
     reviewSeleccionada?: Review;
     accionPendiente: 'baja' | 'alta' | 'eliminar' | null = null;
-    userMap = new Map<number, User>();
-
+    
     imagenSeleccionada?: string;
     indiceActual = 0;
     fotosActuales: string[] = [];
 
     constructor(
         private reviewService: ReviewService,
-        private userService: UserService,
         public auth: AuthService,
         private router: Router,
-        private cdr: ChangeDetectorRef) { }
+        private cdr: ChangeDetectorRef
+    ) { }
 
- 
     reviewsBase = computed(() => {
-        const todasLasResenas = this.reviewsCafeSignal();
-        const esAdmin = this.auth.isAdmin(); 
+        let todasLasResenas: Review[] = [];
 
+        if (this.modoVista === 'cafe') {
+            todasLasResenas = this.reviewsCafeSignal();
+        } else {
+            todasLasResenas = this.reviewsUsuarioSignal();
+        }
+
+        const esAdmin = this.auth.isAdmin(); 
 
         let lista = todasLasResenas.filter(r => r.estado !== this.ESTADO_ELIMINADA);
 
         if (!esAdmin) {
-            lista = lista.filter(r => {
-                const estadoRecibido = r.estado;
-                const estadoEsperado = this.ESTADO_ACTIVA;
-
-
-                return estadoRecibido === estadoEsperado;
-            });
+            lista = lista.filter(r => r.estado === this.ESTADO_ACTIVA);
         }
 
         return lista;
     });
 
     reviewsOrdenadasYFiltradas = computed(() => {
-
         let lista = [...this.reviewsBase()];
         const orden = this.ordenSeleccionado();
         const filtro = this.filtroActivo(); 
@@ -144,26 +140,16 @@ export class ReviewList implements OnInit, OnChanges {
             if (filtro === 'activas') {
                 lista = lista.filter(r => r.estado === 'ACTIVA');
             } else if (filtro === 'inactivas') {
-                lista = lista.filter(r => r.estado.toUpperCase() !== this.ESTADO_ACTIVA);
+                lista = lista.filter(r => r.estado !== this.ESTADO_ACTIVA);
             }
         }
 
         switch (orden) {
             case 'fechaDesc':
-                lista.sort((a, b) => {
-                    if (a.fecha === b.fecha) {
-                        return b.id - a.id;
-                    }
-                    return b.fecha.localeCompare(a.fecha);
-                });
+                lista.sort((a, b) => b.fecha.localeCompare(a.fecha) || b.id - a.id);
                 break;
             case 'fechaAsc':
-                lista.sort((a, b) => {
-                    if (a.fecha === b.fecha) {
-                        return a.id - b.id;
-                    }
-                    return a.fecha.localeCompare(b.fecha);
-                });
+                lista.sort((a, b) => a.fecha.localeCompare(b.fecha) || a.id - b.id);
                 break;
             case 'puntuacionAlta':
                 lista.sort((a, b) => b.puntuacion - a.puntuacion);
@@ -187,6 +173,7 @@ export class ReviewList implements OnInit, OnChanges {
     
     ngOnInit() {
         this.cargarDataInicial();
+        
         window.addEventListener('keydown', (event) => {
             if (!this.imagenSeleccionada) return;
             if (event.key === 'ArrowLeft') this.anteriorImagen();
@@ -195,87 +182,65 @@ export class ReviewList implements OnInit, OnChanges {
         });
     }
 
-    ngOnChanges() {
-        if (this.cafeId) {
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['cafeId'] && this.modoVista === 'cafe' && this.cafeId) {
             this.cargarDataInicial();
+        }
+
+        if (changes['actualizar'] && !changes['actualizar'].firstChange) {
+            if (this.modoVista === 'cafe') {
+                this.cargarDataInicial();
+            }
         }
     }
 
-
-cargarDataInicial() {
-        this.loading = true;
-        this.error = '';
-
-        // ❌ ELIMINAMOS COMPLETAMENTE EL BLOQUE DE USUARIOS SIMULADOS
-        /*
-        const simulatedUsers: User[] = [
-          { id: 1, nombre: 'User', apellido: 'Test', email: 'test@correo.com', estado: 'ACTIVO', fotoPerfil: '', tipoUser: 'CLIENTE', password: '' },
-          //...
-        ];
-        const usersActivos = simulatedUsers.filter(u => u.estado === 'ACTIVO');
-        this.userMap = new Map(usersActivos.map(u => [u.id, u]));
-        */
-
-        const incluirInactivas = this.auth.isAdmin();
-        const idNum = Number(this.cafeId);
-
-        if (isNaN(idNum) || idNum === 0) {
-            this.error = 'ID inválido.';
+    cargarDataInicial() {
+     
+        if (this.modoVista === 'perfil') {
             this.loading = false;
             return;
         }
 
-        let reviewObservable: Observable<Review[]>;
+        this.loading = true;
+        this.error = '';
 
-        if (this.modoVista === 'cafe') {
-            // Asume que getByCafe devuelve el objeto Review con userNombre, userApellido, etc.
-            reviewObservable = this.reviewService.getByCafe(idNum, incluirInactivas);
-        } else {
-            // Asume que getByUsuario devuelve el objeto Review con userNombre, userApellido, etc.
-            reviewObservable = this.reviewService.getByUsuario(idNum, incluirInactivas);
+        const incluirInactivas = this.auth.isAdmin();
+        const idNum = Number(this.cafeId);
+
+        if (isNaN(idNum) || idNum <= 0) {
+            this.error = 'ID de café inválido.';
+            this.loading = false;
+            return;
         }
 
-        reviewObservable.subscribe({
+        this.reviewService.getByCafe(idNum, incluirInactivas).subscribe({
             next: (reviews) => {
-                const reviewsValidas: Review[] = reviews.map(r => {
-                    // Ya NO BUSCAMOS EN userMap. Usamos los datos que vienen en 'r'.
-                    
-                    // Solo usamos los valores por defecto si el backend no los trae:
-                    const nombre = r.userNombre ?? 'Usuario';
-                    const apellido = r.userApellido ?? '';
-                    const foto = r.userFotoPerfil || this.defaultProfileImage;
-
-                    return {
-                        ...r,
-                        etiquetas: r.etiquetas ?? [],
-                        fotos: r.fotos ?? [],
-                        likes: r.likes ?? 0,
-                        dislikes: r.dislikes ?? 0,
-                        reaccionUsuario: r.reaccionUsuario ?? null,
-
-                        // Asignamos el valor que vino de la API o el default:
-                        userNombre: nombre,
-                        userApellido: apellido,
-                        userFotoPerfil: foto 
-                    };
-                }).filter(r => r.estado !== this.ESTADO_ELIMINADA);
-
-
-                if (this.modoVista === 'cafe') {
-                    this.reviewsCafeSignal.set(reviewsValidas);
-                } else {
-                    this.reviewsUsuarioSignal.set(reviewsValidas);
-                }
+                const reviewsProcesadas = this.procesarReviews(reviews);
+                this.reviewsCafeSignal.set(reviewsProcesadas);
                 this.loading = false;
             },
             error: (err) => {
-                this.error = `Error al cargar reseñas del ${this.modoVista}: ${err.message || 'Desconocido'}`;
+                this.error = `Error al cargar reseñas: ${err.message || 'Desconocido'}`;
                 console.error(err);
                 this.loading = false;
             }
         });
-
     }
+
+    private procesarReviews(reviews: Review[]): Review[] {
+        return reviews.map(r => ({
+            ...r,
+            etiquetas: r.etiquetas ?? [],
+            fotos: r.fotos ?? [],
+            likes: r.likes ?? 0,
+            dislikes: r.dislikes ?? 0,
+            reaccionUsuario: r.reaccionUsuario ?? null,
+            userNombre: r.userNombre ?? 'Usuario',
+            userApellido: r.userApellido ?? '',
+            userFotoPerfil: r.userFotoPerfil || this.defaultProfileImage
+        })).filter(r => r.estado !== this.ESTADO_ELIMINADA);
+    }
+
 
     getFotoPerfil(user: User): string {
         if (!user.fotoPerfil || user.fotoPerfil.trim() === '') {
@@ -295,12 +260,11 @@ cargarDataInicial() {
         }
     }
 
-
     formatearFecha(fecha: string): string {
+        if(!fecha) return '';
         const [year, month, day] = fecha.split('-');
         return `${day}/${month}/${year}`;
     }
-
 
     esPropietaria(review: Review): boolean {
         const user = this.auth.getUserFromToken();
@@ -328,21 +292,19 @@ cargarDataInicial() {
         this.editarResena.emit(review);
     }
 
-getCostoTexto(costo: 'BARATO' | 'MEDIO' | 'CARO' | null): string {
-  switch(costo) {
-    case 'BARATO': return '$';
-    case 'MEDIO': return '$$';
-    case 'CARO': return '$$$';
-    default: return '';
-  }
-}
-
+    getCostoTexto(costo: 'BARATO' | 'MEDIO' | 'CARO' | null): string {
+        switch(costo) {
+            case 'BARATO': return '$';
+            case 'MEDIO': return '$$';
+            case 'CARO': return '$$$';
+            default: return '';
+        }
+    }
 
     getEtiquetaLabel(etiqueta: string): string {
         const encontrada = this.etiquetasDisponibles.find(e => e.value === etiqueta);
         return encontrada ? encontrada.label : etiqueta;
     }
-
 
 
     confirmarBaja(review: Review) {
@@ -364,7 +326,6 @@ getCostoTexto(costo: 'BARATO' | 'MEDIO' | 'CARO' | null): string {
     }
 
     eliminarReview(review: Review) {
-
         this.reviewSeleccionada = review;
         this.accionPendiente = 'eliminar';
         this.modalTitulo = 'Confirmar eliminación';
@@ -386,17 +347,14 @@ getCostoTexto(costo: 'BARATO' | 'MEDIO' | 'CARO' | null): string {
                 obs = this.reviewService.desactivar(reviewId);
                 mensajeExito = 'Reseña desactivada con éxito.';
                 break;
-
             case 'eliminar':
                 obs = this.reviewService.eliminar(reviewId);
                 mensajeExito = 'Reseña eliminada con éxito.';
                 break;
-
             case 'alta':
                 obs = this.reviewService.activar(reviewId);
                 mensajeExito = 'Reseña activada con éxito.';
                 break;
-
             default:
                 this.cerrarModal();
                 return;
@@ -405,14 +363,13 @@ getCostoTexto(costo: 'BARATO' | 'MEDIO' | 'CARO' | null): string {
         obs.subscribe({
             next: () => {
                 this.mostrarMensaje(mensajeExito);
-                this.reseñasActualizadas.emit();
-
+                this.reseñasActualizadas.emit(); 
 
                 if (this.modoVista === 'perfil') {
                     if (this.accionPendiente === 'eliminar') {
                         this.resenaEliminada.emit(review);
                     } else {
-                        this.cargarDataInicial();
+                        this.resenaEliminada.emit(review); 
                     }
                 } else {
                     this.cargarDataInicial();
@@ -426,7 +383,6 @@ getCostoTexto(costo: 'BARATO' | 'MEDIO' | 'CARO' | null): string {
 
         this.cerrarModal();
     }
-
 
     cerrarModal() {
         this.modalVisible = false;
@@ -469,96 +425,61 @@ getCostoTexto(costo: 'BARATO' | 'MEDIO' | 'CARO' | null): string {
         this.imagenSeleccionada = this.fotosActuales[this.indiceActual];
     }
 
-    anteriorFoto(event: MouseEvent) {
-        event.stopPropagation();
-        this.anteriorImagen();
-    }
-
-    siguienteFoto(event: MouseEvent) {
-        event.stopPropagation();
-        this.siguienteImagen();
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     readonly TIPO_LIKE: TipoReaccion = 'LIKE';
     readonly TIPO_DISLIKE: TipoReaccion = 'DISLIKE';
 
-manejarReaccion(review: Review, nuevaReaccion: TipoReaccion): void {
-  const currentUser = this.auth.getUserFromToken();
-  if (!currentUser?.id) {
-    this.mostrarMensaje('Debes iniciar sesión para reaccionar.');
-    return;
-  }
+    manejarReaccion(review: Review, nuevaReaccion: TipoReaccion): void {
+        const currentUser = this.auth.getUserFromToken();
+        if (!currentUser?.id) {
+            this.mostrarMensaje('Debes iniciar sesión para reaccionar.');
+            return;
+        }
 
-  const reviewId = review.id;
-  const userId = Number(currentUser.id);
-  const esMismo = review.reaccionUsuario === nuevaReaccion;
-   
-  this.actualizarEstadoReaccionLocal(review, nuevaReaccion);
-   console.log(review)
-  const obs = esMismo
-    ? this.reviewService.quitarReaccion(reviewId, userId)
-    : this.reviewService.reaccionar(reviewId, userId, nuevaReaccion);
+        const reviewId = review.id;
+        const userId = Number(currentUser.id);
+        const esMismo = review.reaccionUsuario === nuevaReaccion;
+        
+        this.actualizarEstadoReaccionLocal(review, nuevaReaccion);
 
-  obs.pipe(
-    catchError(err => {
-      console.error('Error al registrar la reacción:', err);
-      this.mostrarMensaje('Error al procesar la reacción.');
+        const obs = esMismo
+            ? this.reviewService.quitarReaccion(reviewId, userId)
+            : this.reviewService.reaccionar(reviewId, userId, nuevaReaccion);
 
-      this.actualizarEstadoReaccionLocal(review, review.reaccionUsuario!);
-      return throwError(() => new Error('Error en la reacción'));
-    })
-  ).subscribe();
-}
-actualizarEstadoReaccionLocal(reviewActual: Review, nuevaReaccion: TipoReaccion): void {
-  const reviewsSignal = this.modoVista === 'cafe'
-    ? this.reviewsCafeSignal
-    : this.reviewsUsuarioSignal;
+        obs.pipe(
+            catchError(err => {
+                console.error('Error al registrar la reacción:', err);
+                this.mostrarMensaje('Error al procesar la reacción.');
+                this.actualizarEstadoReaccionLocal(review, review.reaccionUsuario!);
+                return throwError(() => new Error('Error en la reacción'));
+            })
+        ).subscribe();
+    }
 
-  reviewsSignal.update(reviews =>
-    reviews.map(r => {
-      if (r.id !== reviewActual.id) return r;
+    actualizarEstadoReaccionLocal(reviewActual: Review, nuevaReaccion: TipoReaccion): void {
+        const reviewsSignal = this.modoVista === 'cafe'
+            ? this.reviewsCafeSignal
+            : this.reviewsUsuarioSignal;
 
-      let likes = r.likes;
-      let dislikes = r.dislikes;
-      const reaccionActual = r.reaccionUsuario;
+        reviewsSignal.update(reviews =>
+            reviews.map(r => {
+                if (r.id !== reviewActual.id) return r;
 
-      if (reaccionActual === 'LIKE') likes--;
-      if (reaccionActual === 'DISLIKE') dislikes--;
+                let likes = r.likes;
+                let dislikes = r.dislikes;
+                const reaccionActual = r.reaccionUsuario;
 
-      if (reaccionActual === nuevaReaccion) {
-        return { ...r, likes, dislikes, reaccionUsuario: null };
-      }
+                if (reaccionActual === 'LIKE') likes--;
+                if (reaccionActual === 'DISLIKE') dislikes--;
 
-      if (nuevaReaccion === 'LIKE') likes++;
-      if (nuevaReaccion === 'DISLIKE') dislikes++;
+                if (reaccionActual === nuevaReaccion) {
+                    return { ...r, likes, dislikes, reaccionUsuario: null };
+                }
 
-      return { ...r, likes, dislikes, reaccionUsuario: nuevaReaccion };
-    })
-  );
-}
+                if (nuevaReaccion === 'LIKE') likes++;
+                if (nuevaReaccion === 'DISLIKE') dislikes++;
 
+                return { ...r, likes, dislikes, reaccionUsuario: nuevaReaccion };
+            })
+        );
+    }
 }
