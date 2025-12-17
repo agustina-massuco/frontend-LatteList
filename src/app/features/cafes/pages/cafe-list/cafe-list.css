@@ -508,3 +508,8 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Ocultar botón de acción (bookmark) para administradores */
+.hide-action ::ng-deep .action-button {
+  display: none !important;
+}

@@ -14,6 +14,7 @@ import ReviewRequest from '../../../review/model/ReviewRequest';
 import Cafe from '../../model/CafeModel';
 import { COSTOS_PROMEDIO } from '../../../../shared/constantes/costo-promedio';
 import { ListService } from '../../../lista/service/list-service';
+import { AuthService } from '../../../../core/services/auth-service';
 
 interface CafeDetailDTO {
   id: number;
@@ -155,15 +156,12 @@ export class CafeDetailComponent implements OnInit {
   cafeSeleccionado: any = null;
   actualizarLista = false;
 
-  auth = {
-    isAdmin: () => false
-  };
-
   constructor(
     private cafeService: CafeService,
     private router: Router,
     private route: ActivatedRoute,
-    private listasService: ListService
+    private listasService: ListService,
+    public auth: AuthService
   ) {}
 
   ngOnInit(): void {

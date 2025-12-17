@@ -11,6 +11,7 @@ import Cafe from '../../model/CafeModel';
 import { CafeService } from '../../service/cafeService';
 import { ListService } from '../../../lista/service/list-service';
 import { ListButtonComponent } from '../../../../shared/list-button/list-button.component';
+import { AuthService } from '../../../../core/services/auth-service';
 
 @Component({
   selector: 'app-cafe-list',
@@ -75,12 +76,13 @@ export class CafeListComponent implements OnInit {
   newListName = signal('');
   creatingList = signal(false);
 
+  isAdmin = computed(() => this.authService.isAdmin());
+
   constructor(
     private cafeService: CafeService,
     private router: Router,
-    private listService: ListService
-
-    
+    private listService: ListService,
+    private authService: AuthService
   ) {
     effect(() => {
       const _ = this.filtros();

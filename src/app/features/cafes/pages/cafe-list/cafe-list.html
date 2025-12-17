@@ -51,7 +51,11 @@
 
   <div class="cafe-list">
     @for (cafe of cafesPaginados(); track cafe.id) {
-    <app-list-item [item]="cafe" (itemClick)="onCafeClick(cafe.id!)" (actionClick)="onBookmarkClick($event)">
+    <app-list-item 
+      [item]="cafe" 
+      (itemClick)="onCafeClick(cafe.id!)" 
+      [class.hide-action]="isAdmin()"
+      (actionClick)="!isAdmin() ? onBookmarkClick($event) : null">
     </app-list-item>
     } @if (cafeList().length === 0) {
     <div class="no-results">
