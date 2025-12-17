@@ -1,6 +1,6 @@
 import { Component, computed, OnInit, signal, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { ListService } from '../../service/list-service';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../core/services/toast.service';
@@ -52,6 +52,7 @@ export class ListOfList implements OnInit {
     public listSer: ListService,
     private cafeSer: CafeService,
     private tostada: ToastService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -126,10 +127,30 @@ export class ListOfList implements OnInit {
 
   totalPages = computed(() => Math.ceil(this.filteredLists().length / this.pageSize));
 
+  sugerencias = computed(() => {
+    const term = this.tempSearchTerm().toLowerCase();
+    if (!term) return [];
+    
+    const mode = this.viewMode();
+    const source = mode === 'mias' ? this.listSer.userLists() : this.listSer.publicLists();
+    
+    return source
+      .filter(l => l.nombre.toLowerCase().includes(term) || 
+                   (l.userNombre && l.userNombre.toLowerCase().includes(term)))
+      .slice(0, 5);
+  });
+
   onSearchInput(term: string) { this.tempSearchTerm.set(term); } 
   onSearchSubmit(term: string) { 
       this.search.set(term); 
       this.page.set(1); 
+  }
+
+  seleccionarSugerencia(lista: List) {
+    this.tempSearchTerm.set('');
+    this.search.set('');
+    if (this.searchInputComponent) this.searchInputComponent.clear();
+    this.router.navigate(['/lista', lista.id]);
   }
 
 

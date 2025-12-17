@@ -12,18 +12,33 @@
 
         @if(viewMode() === 'mias') {
             <button (click)="openCreateModal()" class="btn-create-list">
-                + Nueva
+                Nueva
             </button>
         }
     </div>
 
     <div class="search-bar-wrapper">
-        <app-input-search 
-            #searchInput
-            [placeholder]="viewMode() === 'mias' ? 'Buscar en mis listas...(enter para continuar)' : 'Buscar listas o usuarios...(enter para continuar)'"
-            (searchSubmit)="onSearchSubmit($event)"
-            (search)="onSearchInput($event)">
-        </app-input-search>
+        <div class="search-filter" #searchContainer>
+            <app-input-search 
+                #searchInput
+                [placeholder]="viewMode() === 'mias' ? 'Buscar en mis listas..' : 'Buscar listas o usuarios...'"
+                (searchSubmit)="onSearchSubmit($event)"
+                (search)="onSearchInput($event)">
+            </app-input-search>
+            
+            @if (sugerencias().length > 0) {
+                <div class="suggestions-dropdown">
+                    @for (lista of sugerencias(); track lista.id) {
+                        <div class="suggestion-item" (click)="seleccionarSugerencia(lista)">
+                            <div class="suggestion-info">
+                                <strong>{{ lista.nombre }}</strong>
+                                <span class="suggestion-meta">{{ lista.cafeTotal || 0 }} cafés</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
     </div>
 
     <hr>
@@ -60,13 +75,13 @@
                                         }
                                     </button>
                                 }
+                                @if(viewMode() === 'explorar' && list.userNombre) {
+                                    <span class="owner-tag"> <app-icon name="PERSONA"></app-icon> {{ list.userNombre }}</span>
+                                }
                             </div>
                             
                             <div class="meta-row">
                                 <span class="list-date">{{(list.fechaCreacion) }}</span>
-                                @if(viewMode() === 'explorar' && list.userNombre) {
-                                    <span class="owner-tag"> <app-icon name="PERSONA"></app-icon> {{ list.userNombre }}</span>
-                                }
                             </div>
                         </div>
                         
@@ -76,7 +91,6 @@
                         </div>
                         
                         <div class="card-footer">
-                            <span class="view-btn">Ver</span>
                             
                             @if(viewMode() === 'mias') {
                                 <button class="btn-delete-list" (click)="$event.stopPropagation(); openDeleteModal(list.id)">

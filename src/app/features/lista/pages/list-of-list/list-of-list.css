@@ -31,8 +31,76 @@
 }
 
 .search-bar-wrapper {
-    max-width: 600px;
-    margin: 0 auto 20px auto;
+    max-width: 500px;
+    margin: 0 0 20px 0;
+}
+
+.search-filter {
+    position: relative;
+    width: 100%;
+}
+
+.suggestions-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dbdbdb;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-height: 320px;
+    overflow-y: auto;
+    z-index: 1000;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: #f9f9f9;
+}
+
+.suggestion-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.suggestion-info strong {
+    font-size: 14px;
+    font-weight: 500;
+    color: #262626;
+    display: block;
+}
+
+.suggestion-meta {
+    font-size: 12px;
+    color: #8e8e8e;
 }
 
 .pagination-wrapper {
@@ -45,7 +113,8 @@
 .title-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    width: 100%;
 }
 
 .visibility-btn {
@@ -62,20 +131,26 @@
     transform: scale(1.1);
 }
 
+.meta-row {
+    display: flex;
+    align-items: center;
+}
+
 .owner-tag {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     color: #2c3e50;
     font-weight: bold;
     background: #f0f0f0;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-top: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin: 0;
     width: fit-content;
+
 }
 
 .list-container {
-    max-width: 900px;
+    max-width: 800px;
     margin: 40px auto;
     padding: 20px;
     background-color: #f8f5f0;
@@ -85,7 +160,8 @@
    .list-header { 
     display: flex;
     justify-content: space-between;
-    align-items: center;
+        align-items: center;
+
     border-bottom: 2px solid #e0d9d0; 
     padding-bottom: 15px;
     margin-bottom: 25px;
@@ -125,7 +201,7 @@
 
 .list-card {
     background: white;
-    padding: 20px;
+    padding: 20px;;
     border-radius: 10px;
     border: 1px solid #e0d9d0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -154,8 +230,9 @@
     flex-direction: column;
     align-items: flex-start; 
     border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
     margin-bottom: 12px;
+    gap: 6px;
 }
 
 .list-name {
@@ -163,25 +240,25 @@
     color: #3d2a21;
     font-size: 1.3em;
     font-weight: 700;
-    word-break: break-word; 
+    word-break: break-word;
 }
 
 .list-date {
     font-size: 0.85em;
     color: #888;
-    margin-top: 5px; 
+    margin: 0;
 } 
 
 .list-stats {
     flex-grow: 1; 
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 
 .cafe-count {
     font-weight: 600;
     color: #3d2a21;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     font-size: 1em;
 }
 
@@ -190,6 +267,7 @@
     font-size: 0.85em;
     color: #666;
     line-height: 1.4;
+    margin-bottom: 0;
 }
 
 .view-details-prompt {
