@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import ReviewResponse from '../model/Review'; 
 import ReviewRequest from '../model/ReviewRequest';
 import { AuthService } from '../../../core/services/auth-service';
@@ -51,10 +51,7 @@ export class ReviewService {
  getByCafe(cafeId: number, incluirInactivas = false): Observable<ReviewResponse[]> {
   return this.http.get<ReviewResponse[]>(
     `${this.baseUrl}/cafe/${cafeId}?incluirInactivas=${incluirInactivas}`
-  ).pipe(
-    tap(reviews => console.log('Reviews recibidas del backend:', reviews)), // 🔹 Aquí ves reaccionUsuario
-    catchError(this.manejarError)
-  );
+  ).pipe(catchError(this.manejarError));
 }
 
 

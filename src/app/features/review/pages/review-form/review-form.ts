@@ -139,7 +139,7 @@ COSTOS_PROMEDIO=COSTOS_PROMEDIO;
       fotos: [],
       likes: 0, 
     dislikes: 0, 
-    reaccionUsuario: null
+    reaccionActualUsuario: null
     };
   }
 agregarEtiqueta(etiqueta: string) {

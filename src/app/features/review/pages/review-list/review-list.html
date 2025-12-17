@@ -171,14 +171,14 @@
                                     @if (auth.isLoggedIn()) {
                                         <button (click)="!isAdmin() && $event.stopPropagation(); !isAdmin() && manejarReaccion(review, TIPO_LIKE)"
                                             class="action-button"
-                                            [class.reaction-active]="review.reaccionUsuario === TIPO_LIKE"
+                                            [class.reaction-active]="review.reaccionActualUsuario === TIPO_LIKE"
                                             [class.admin-disabled]="isAdmin()">
                                             <i class="fas fa-thumbs-up"></i>
                                             <span>{{ review.likes }}</span>
                                         </button>
                                         <button (click)="!isAdmin() && $event.stopPropagation(); !isAdmin() && manejarReaccion(review, TIPO_DISLIKE)"
                                             class="action-button"
-                                            [class.reaction-active]="review.reaccionUsuario === TIPO_DISLIKE"
+                                            [class.reaction-active]="review.reaccionActualUsuario === TIPO_DISLIKE"
                                             [class.admin-disabled]="isAdmin()">
                                             <i class="fas fa-thumbs-down"></i>
                                             <span>{{ review.dislikes }}</span>

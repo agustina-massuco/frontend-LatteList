@@ -230,13 +230,15 @@ export class ReviewList implements OnInit, OnChanges {
     }
 
     private procesarReviews(reviews: Review[]): Review[] {
+        console.log('Reacciones por reseña:', reviews.map(r => ({ id: r.id, reaccionActualUsuario: r.reaccionActualUsuario })));
+        
         return reviews.map(r => ({
             ...r,
             etiquetas: r.etiquetas ?? [],
             fotos: r.fotos ?? [],
             likes: r.likes ?? 0,
             dislikes: r.dislikes ?? 0,
-            reaccionUsuario: r.reaccionUsuario ?? null,
+            reaccionActualUsuario: r.reaccionActualUsuario ?? null,
             userNombre: r.userNombre ?? 'Usuario',
             userApellido: r.userApellido ?? '',
             userFotoPerfil: r.userFotoPerfil || this.defaultProfileImage
@@ -439,7 +441,7 @@ export class ReviewList implements OnInit, OnChanges {
 
         const reviewId = review.id;
         const userId = Number(currentUser.id);
-        const esMismo = review.reaccionUsuario === nuevaReaccion;
+        const esMismo = review.reaccionActualUsuario === nuevaReaccion;
         
         this.actualizarEstadoReaccionLocal(review, nuevaReaccion);
 
@@ -451,7 +453,7 @@ export class ReviewList implements OnInit, OnChanges {
             catchError(err => {
                 console.error('Error al registrar la reacción:', err);
                 this.mostrarMensaje('Error al procesar la reacción.');
-                this.actualizarEstadoReaccionLocal(review, review.reaccionUsuario!);
+                this.actualizarEstadoReaccionLocal(review, review.reaccionActualUsuario!);
                 return throwError(() => new Error('Error en la reacción'));
             })
         ).subscribe();
@@ -468,19 +470,19 @@ export class ReviewList implements OnInit, OnChanges {
 
                 let likes = r.likes;
                 let dislikes = r.dislikes;
-                const reaccionActual = r.reaccionUsuario;
+                const reaccionActual = r.reaccionActualUsuario;
 
                 if (reaccionActual === 'LIKE') likes--;
                 if (reaccionActual === 'DISLIKE') dislikes--;
 
                 if (reaccionActual === nuevaReaccion) {
-                    return { ...r, likes, dislikes, reaccionUsuario: null };
+                    return { ...r, likes, dislikes, reaccionActualUsuario: null };
                 }
 
                 if (nuevaReaccion === 'LIKE') likes++;
                 if (nuevaReaccion === 'DISLIKE') dislikes++;
 
-                return { ...r, likes, dislikes, reaccionUsuario: nuevaReaccion };
+                return { ...r, likes, dislikes, reaccionActualUsuario: nuevaReaccion };
             })
         );
     }

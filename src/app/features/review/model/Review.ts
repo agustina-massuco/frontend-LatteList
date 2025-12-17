@@ -20,5 +20,5 @@ export default interface Review {
 
   likes: number;
   dislikes: number;
-  reaccionUsuario: TipoReaccion | null;
+  reaccionActualUsuario: TipoReaccion | null;
 }
