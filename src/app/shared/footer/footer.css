@@ -1,15 +1,5 @@
 
-/*
-.footer {
-    background-color: #4A2A1A; 
-    color: #EEDBB6; 
-    width: 100%;
-}
 
-.footer .container span {
-    color: inherit; 
-    font-size: 0.9rem; 
-}*/
 
 .footer {
   background: #79462d;
@@ -17,7 +7,7 @@
   padding: 60px 20px 40px;
   position: relative;
   overflow: hidden;
-  margin-top: 35px;
+  //margin-top: 35px;
 }
 
 .footer::before {

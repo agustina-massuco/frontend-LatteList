@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import ReviewResponse from '../model/Review'; 
 import ReviewRequest from '../model/ReviewRequest';
+import { AuthService } from '../../../core/services/auth-service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,9 @@ import ReviewRequest from '../model/ReviewRequest';
 export class ReviewService {
   private baseUrl = 'http://localhost:8080/reviews';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+    private auth:AuthService
+  ) {}
 
   crearReview(request: ReviewRequest): Observable<ReviewResponse> {
     return this.http.post<ReviewResponse>(this.baseUrl, request)
@@ -38,11 +41,22 @@ export class ReviewService {
     .pipe(catchError(this.manejarError));
   }
 
-  getByCafe(cafeId: number, incluirInactivas = false): Observable<ReviewResponse[]> {
+ /* getByCafe(cafeId: number, incluirInactivas = false): Observable<ReviewResponse[]> {
     return this.http.get<ReviewResponse[]>(
       `${this.baseUrl}/cafe/${cafeId}?incluirInactivas=${incluirInactivas}`
     ).pipe(catchError(this.manejarError));
-  }
+  }*/
+
+    
+ getByCafe(cafeId: number, incluirInactivas = false): Observable<ReviewResponse[]> {
+  return this.http.get<ReviewResponse[]>(
+    `${this.baseUrl}/cafe/${cafeId}?incluirInactivas=${incluirInactivas}`
+  ).pipe(
+    tap(reviews => console.log('Reviews recibidas del backend:', reviews)), // 🔹 Aquí ves reaccionUsuario
+    catchError(this.manejarError)
+  );
+}
+
 
   getByUsuario(userId: number, incluirInactivas = false): Observable<ReviewResponse[]> {
     return this.http.get<ReviewResponse[]>(
@@ -51,17 +65,40 @@ export class ReviewService {
   }
 
 
-  reaccionar(reviewId: number, userId: number, tipo: string): Observable<void> { 
+ /* reaccionar(reviewId: number, userId: number, tipo: string): Observable<void> { 
     return this.http.post<void>(
       `${this.baseUrl}/${reviewId}/reaccion/${userId}?tipo=${tipo}`, 
       {}
     ).pipe(catchError(this.manejarError));
-  }
+  }*/
 
-  quitarReaccion(reviewId: number, userId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${reviewId}/reaccion/${userId}`)
-    .pipe(catchError(this.manejarError));
-  }
+  reaccionar(reviewId: number, tipo: 'LIKE' | 'DISLIKE'): Observable<any> {
+  const token = this.auth.getToken(); 
+  return this.http.post(
+    `${this.baseUrl}/${reviewId}/reaccion`, 
+    null,
+    {
+      params: { tipo }, 
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+}
+
+
+quitarReaccion(reviewId: number): Observable<void> {
+  const token = this.auth.getToken();
+  return this.http.delete<void>(
+    `${this.baseUrl}/${reviewId}/reaccion`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  ).pipe(catchError(this.manejarError));
+}
+
 
   cambiarEstado(reviewId: number, nuevoEstado: 'ACTIVA' | 'INACTIVA' | 'ELIMINADA'): Observable<void> {
     if (nuevoEstado === 'ACTIVA') {

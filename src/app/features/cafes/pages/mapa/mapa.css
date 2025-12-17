@@ -1,23 +1,17 @@
+/* ⚠️ CRÍTICO: Importar estilos de MapLibre GL para que los marcadores funcionen */
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
+/* 🔧 Estilos globales para marcadores SVG */
 .cafe-marker { 
-  width: 40px; 
-  height: 40px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  border-radius: 50%; 
-  background: linear-gradient(135deg, #8B4513 0%, #5C3317 100%);
-  color: #FFF8DC;
-  box-shadow: 0 2px 8px rgba(61, 37, 21, 0.5); 
-  font-size: 20px; 
-  font-weight: 700;
-  line-height: 1; 
+  width: 32px; 
+  height: 32px; 
   cursor: pointer;
-  border: 3px solid #3d2515;
-  transition: transform 0.2s ease;
+  filter: drop-shadow(0 2px 4px rgba(61, 37, 21, 0.4));
 } 
 
 .cafe-marker:hover {
-  transform: scale(1.15);
+  transform: scale(1.2);
+  filter: drop-shadow(0 4px 6px rgba(61, 37, 21, 0.6));
 }
 
 .user-location-marker {
@@ -27,9 +21,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  position: relative;
   display: block;
-  z-index: 9999;
   animation: pulse 2s infinite;
 }
 
@@ -47,7 +39,6 @@
   width: 100%;
   height: 100vh;
   border-radius: 0;
-  overflow: hidden;
   position: relative;
   background: #f5f1e8;
 }
@@ -55,27 +46,96 @@
 #mapContainer {
   width: 100%;
   height: 100%;
+  position: relative !important;
 }
 
-/* Estilos personalizados para los popups de MapLibre */
-:global(.maplibregl-popup-content) {
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(61, 37, 21, 0.3);
-  font-family: Arial, sans-serif;
+.maplibregl-popup-content {
+  padding: 24px;
+  border-radius: 32px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: white;
+  min-width: 280px;
+  border: none;
 }
 
-:global(.maplibregl-popup-close-button) {
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.popup-title {
+  margin: 0;
   font-size: 20px;
-  color: #8B4513;
-  padding: 4px 8px;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
 }
 
-:global(.maplibregl-popup-close-button:hover) {
-  background-color: rgba(139, 69, 19, 0.1);
-  color: #5C3317;
+.popup-description {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  line-height: 1.5;
 }
 
-:global(.maplibregl-popup-tip) {
-  border-top-color: #8B4513 !important;
+.popup-buttons {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.popup-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  outline: none;
+}
+
+.popup-btn-secondary {
+  background-color: #e8e8e8;
+  color: #333;
+}
+
+.popup-btn-secondary:hover {
+  background-color: #d4d4d4;
+  transform: translateY(-1px);
+}
+
+.popup-btn-primary {
+  background-color: #8B4513;
+  color: white;
+}
+
+.popup-btn-primary:hover {
+  background-color: #6d3410;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 69, 19, 0.3);
+}
+
+:global(.maplibregl-marker) {
+  position: absolute !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+  will-change: transform !important;
+}
+
+:global(.maplibregl-canvas-container) {
+  position: relative !important;
+}
+
+:global(.maplibregl-canvas) {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
 }

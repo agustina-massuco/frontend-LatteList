@@ -2,6 +2,7 @@
 
 .navbar {
     background-color: #79462d !important; 
+    z-index: 9999;
 }
 
 .navbar-brand {
