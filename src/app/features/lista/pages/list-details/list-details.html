@@ -1,1 +1,81 @@
-<p>list-details works!</p>
+<div class="container my-4 animate__animated animate__fadeIn">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+     
+      <div class="card shadow-sm mb-4 bg-cream">
+        <div class="card-body position-relative">
+          
+            @if (!loading && list && !isOwner) {
+                <button class="btn btn-sm btn-outline-brown position-absolute top-0 end-0 m-3" 
+                        (click)="clonarLista()" 
+                        [disabled]="clonar">
+                    <i class="bi bi-save"></i> {{ clonar ? 'Guardando...' : 'Guardar en mis listas' }}
+                </button>
+            }
+
+            @if (loading) {
+            } @else if (list) {
+                
+                <div class="d-flex justify-content-center align-items-center list-title-wrapper mt-2">
+                    @if (isOwner && editandoNombre) {
+                        <input [(ngModel)]="nombreListaEditado" (blur)="confirmarCambioNombre()" (keydown.enter)="confirmarCambioNombre()" class="title-edit-input text-center">
+                    } @else {
+                        <h1 class="card-title text-center mb-0 list-title">{{ list.nombre }}</h1>
+                        @if (isOwner) {
+                            <span class="ms-2 list-edit-icon" (click)="iniciarEdicionNombre()"><app-icon name="PENCIL"></app-icon></span>
+                        }
+                    }
+                </div>
+                
+                @if (!isOwner && list.userNombre) {
+                    <p class="text-center text-muted small mt-1">Creada por {{ list.userNombre }}</p>
+                }
+            }
+        </div>
+      </div>
+     
+      @if (!loading && list) {
+          @for (cafe of cafes; track cafe.id) {
+            <div class="d-flex align-items-center p-3 rounded shadow-sm list-cafe-item bg-white mb-3"
+                 [ngClass]="{'cafe-visitado': isOwner && esVisitado(cafe.id)}"> <!-- Solo colorear visitados si es mía (o si clonás la lógica) -->
+                 
+                 <div class="list-item-image">
+                    <span class="placeholder-letter">{{ cafe.nombre.charAt(0) }}</span>
+                 </div>
+
+                 <a [routerLink]="['/cafes', cafe.id]" class="text-decoration-none text-dark flex-grow-1 ps-3">
+                    <h5 class="mb-1 text-brown fw-bold">{{ cafe.nombre }}</h5>
+                    <p class="text-muted mb-0 small">{{ cafe.direccion }}</p>
+                 </a>
+
+                 @if (isOwner) {
+                     <div class="menu-acciones-cafe">
+                        <button class="menu-toggle" (click)="toggleMenuCafe(cafe.id!)">⋮</button>
+                        @if (menuCafeAbiertoId === cafe.id) {
+                            <div class="menu-desplegable shadow-sm show-menu">
+                                <button (click)="marcarComoVisitado(cafe.id)">
+                                    {{ esVisitado(cafe.id) ? 'No visitado' : 'Ya fui!' }}
+                                </button>
+                                <button class="text-danger" (click)="removerCafeDeLista(cafe.id)">Borrar</button>
+                            </div>
+                        }
+                     </div>
+                 }
+            </div>
+          }
+      }
+
+    </div>
+  </div>
+</div>
+
+<app-confirmacion-modal
+  [visible]="mostrarConfirmacionNombre"
+  titulo="Cambiar nombre de lista"
+  [mensaje]="'¿Estás segura de que quieres cambiar el nombre de la lista a ' + nombreListaEditado + '?'"
+  textoConfirmar="Sí, cambiar"
+  textoCancelar="Cancelar"
+  (confirmar)="confirmarGuardarNombre()"
+  (cancelar)="cancelarGuardarNombre()"
+  (overlayClick)="cancelarGuardarNombre()"
+></app-confirmacion-modal>

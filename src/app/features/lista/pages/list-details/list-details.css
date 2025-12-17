@@ -1,0 +1,210 @@
+/* --- Variables y Paleta de Colores LatteList --- */
+:host {
+    --color-cafe-oscuro: #4A2A1A; /* Base Dark Brown */
+    --color-cafe-medio: #79462d; /* Medium Brown / Accent */
+    --color-cafe-claro: #5d3a2a; /* Darker tone for text */
+    --color-crema: #fffaf2; /* Off-White / Background */
+    --color-crema-oscuro: #e0d5c1; /* Border / Subtle Accent */
+    --color-visitado-bg: #f7f0e6; /* Light Beige for visited items */
+}
+
+/* --- Base y Utilidades --- */
+.container {
+    min-height: 70vh;
+    padding-top: 2rem;
+}
+
+.bg-cream {
+    background-color: var(--color-crema);
+    border: 1px solid var(--color-crema-oscuro);
+    border-radius: 15px;
+}
+
+.text-brown {
+    color: var(--color-cafe-claro);
+}
+
+.btn-custom {
+    background-color: var(--color-cafe-medio);
+    color: white;
+}
+
+/* --- Header y Título --- */
+
+.list-title {
+    color: var(--color-cafe-oscuro);
+    font-weight: 900; /* Extra bold */
+    font-size: 2.2rem;
+}
+
+.list-edit-icon {
+    font-size: 1.2rem;
+    color: var(--color-cafe-medio);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    vertical-align: middle;
+    margin-top: 5px; /* Ajuste fino de alineación */
+    padding: 5px;
+}
+
+.list-edit-icon:hover {
+    transform: scale(1.3);
+}
+
+.title-edit-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--color-cafe-oscuro);
+    border-bottom: 3px solid var(--color-cafe-medio);
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* --- Lista de Cafés (Items) --- */
+
+.list-cafe-item {
+    /* Base del ítem */
+    position: relative;
+    padding: 15px 15px 15px 75px !important; /* Aumentamos el padding para el avatar */
+    border-radius: 10px !important;
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease-in-out;
+    min-height: 70px;
+    cursor: pointer;
+}
+
+.list-cafe-item:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px);
+}
+
+/* --- Avatar/Placeholder de Café (Letra Inicial) --- */
+.list-item-image {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px; /* Tamaño del cuadrado */
+    height: 45px;
+    background: var(--color-cafe-medio);
+    color: var(--color-crema);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Estados (Visitado) --- */
+.cafe-visitado {
+    background-color: var(--color-visitado-bg) !important;
+    border-left: 6px solid var(--color-cafe-oscuro) !important;
+    opacity: 0.9;
+}
+
+.cafe-visitado .text-brown,
+.cafe-visitado h5 {
+    color: #999 !important;
+    text-decoration: line-through;
+    font-weight: normal !important;
+}
+
+/* --- Menú Contextual (Tres Puntos) --- */
+
+.menu-acciones-cafe {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-cafe-medio);
+    cursor: pointer;
+    line-height: 1;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.menu-toggle:hover {
+    background: rgba(121, 70, 45, 0.1);
+}
+
+.menu-desplegable {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: white;
+    border: 1px solid var(--color-crema-oscuro);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    min-width: 200px;
+    overflow: hidden;
+    animation: fadeInScale 0.2s ease-out;
+}
+
+.menu-desplegable.show-menu {
+    display: block;
+}
+
+.menu-desplegable button {
+    padding: 10px 15px;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--color-cafe-oscuro);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+}
+
+.menu-desplegable button:hover {
+    background: var(--color-visitado-bg);
+}
+
+.menu-desplegable .text-danger {
+    color: #cc0000 !important; 
+}
+
+/* --- Botones Generales (Volver, Clonar) --- */
+
+.btn-volver {
+    background-color: var(--color-cafe-oscuro);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.btn-volver:hover {
+    background-color: var(--color-cafe-medio);
+}
+
+.btn-outline-brown {
+    color: var(--color-cafe-medio);
+    border-color: var(--color-cafe-medio);
+    transition: all 0.2s;
+}
+
+.btn-outline-brown:hover {
+    background-color: var(--color-cafe-medio);
+    color: white;
+}
