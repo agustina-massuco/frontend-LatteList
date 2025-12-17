@@ -13,8 +13,6 @@ import Cafe from '../../../cafes/model/CafeModel';
 import { ReviewService } from '../../../review/service/review-service';
 import { CafeService } from '../../../cafes/service/cafeService';
 
-
-
 @Component({
   selector: 'app-user-details',
   standalone: true,
@@ -29,7 +27,9 @@ export class UserDetails implements OnInit {
   readonly defaultProfileImage = '/images/grano.png';
 
   allUserReviews: Review[] = []; 
-  cafeMap = new Map<number, Cafe>(); 
+  
+  cafeMap = new Map<string, Cafe>(); 
+
   loadingReviews: boolean = true;
   loadingError: string = '';
 
@@ -76,6 +76,12 @@ export class UserDetails implements OnInit {
     });
   }
 
+  calcularPromedioPuntuacion(): number {
+    if (!this.allUserReviews || this.allUserReviews.length === 0) return 0;
+    const total = this.allUserReviews.reduce((sum, r) => sum + r.puntuacion, 0);
+    return total / this.allUserReviews.length;
+  }
+
   cargarPerfil(userId: string) {
     this.userSer.getUser(userId).subscribe({
       next: (data) => {
@@ -83,8 +89,6 @@ export class UserDetails implements OnInit {
         
         const loggedUser = this.authSer.getUserFromToken();
         this.viendoMiPerfil = loggedUser ? loggedUser.id.toString() === userId.toString() : false;
-        
-        this.verificarAdminUnico(); 
         
         if (this.user.tipoUser === 'ADMIN') {
             this.loadingReviews = false;
@@ -104,7 +108,6 @@ export class UserDetails implements OnInit {
     this.loadingError = '';
     
     const soyAdmin = this.authSer.isAdmin();
-    
     const userIdNum = Number(userId);
 
     forkJoin({
@@ -112,10 +115,10 @@ export class UserDetails implements OnInit {
         reviews: this.reviewSer.getByUsuario(userIdNum, soyAdmin) 
     }).subscribe({
       next: ({ cafes, reviews }) => {
-        this.cafeMap = new Map(cafes.map(c => [c.id!, c]));
+        
+        this.cafeMap = new Map(cafes.map(c => [c.id!.toString(), c]));
 
         const reviewsTyped = reviews as unknown as Review[];
-        
         this.allUserReviews = reviewsTyped.filter(r => r.estado !== 'ELIMINADO');
         
         this.loadingReviews = false;
@@ -128,8 +131,6 @@ export class UserDetails implements OnInit {
     });
   }
 
-
-
   confirmarDesactivacionPropia() {
     this.modalTitulo = 'Pausar mi Cuenta';
     this.modalMensaje = 'Tu cuenta pasará será desactivada. No serás visible, pero tus datos se guardan.';
@@ -139,7 +140,6 @@ export class UserDetails implements OnInit {
   }
 
   confirmarEliminacionPropia() {
-    if (this.validarAdminUnico()) return;
     this.modalTitulo = 'Eliminar mi Cuenta Definitivamente';
     this.modalMensaje = 'Acción IRREVERSIBLE. Tus listas se borrarán y tus reseñas desaparecerán.';
     this.accionPendiente = 'eliminar_user';
@@ -162,7 +162,6 @@ export class UserDetails implements OnInit {
     this.idAfectada = id;
     this.modalVisible = true;
   }
-
 
   ejecutarAccionConfirmada() {
     this.modalVisible = false;
@@ -203,29 +202,12 @@ export class UserDetails implements OnInit {
     this.resetModalState();
   }
 
-
   private updateReviewState(nuevoEstado: 'ACTIVO' | 'INACTIVO') {
     if (this.reviewAfectada) {
         this.reviewAfectada.estado = nuevoEstado;
         if (!this.authSer.isAdmin() && nuevoEstado === 'INACTIVO') {
              this.allUserReviews = this.allUserReviews.filter(r => r.id !== this.reviewAfectada!.id);
         }
-    }
-  }
-
-  private validarAdminUnico(): boolean {
-    if (this.user?.tipoUser === 'ADMIN' && this.isOnlyAdmin) {
-      this.modalTitulo = 'No permitido';
-      this.modalMensaje = 'Eres el único Admin activo. Asigna otro antes de borrarte.';
-      this.modalVisible = true;
-      return true;
-    }
-    return false;
-  }
-
-  private verificarAdminUnico(): void {
-    if (this.user?.tipoUser === 'ADMIN') {
-      this.userSer.contarAdminsActivos().subscribe(count => this.isOnlyAdmin = count <= 1);
     }
   }
 
@@ -239,8 +221,14 @@ export class UserDetails implements OnInit {
   }
 
   getFotoPerfil(user: User): string { return user.fotoPerfil || this.defaultProfileImage; }
-  toggleMenuResena(menuId: string) { this.menuResenaAbiertoId = this.menuResenaAbiertoId === menuId ? null : menuId; }
-  cerrarMenuResena(menuId: string) { setTimeout(() => { if (this.menuResenaAbiertoId === menuId) this.menuResenaAbiertoId = null; }, 150); }
+  
+  toggleMenuResena(menuId: string) { 
+      this.menuResenaAbiertoId = this.menuResenaAbiertoId === menuId ? null : menuId; 
+  }
+  
+  cerrarMenuResena(menuId: string) { 
+      setTimeout(() => { if (this.menuResenaAbiertoId === menuId) this.menuResenaAbiertoId = null; }, 150); 
+  }
   
   abrirSelectorFoto() { 
     if (this.viendoMiPerfil) document.getElementById('file-selector')?.click(); 
@@ -261,14 +249,12 @@ export class UserDetails implements OnInit {
     }
   }
 
-
   abrirEdicionReview(review: Review) {
      this.reviewEditar = review; 
-     this.cafeSeleccionado = this.cafeMap.get(review.cafeId) || null; 
+     this.cafeSeleccionado = this.cafeMap.get(review.cafeId.toString()) || null; 
      this.formVisible = true; 
-    }
+  }
  
-  
   cancelarResena() { 
     this.reviewEditar = null; this.formVisible = false; 
   }
@@ -311,31 +297,3 @@ export class UserDetails implements OnInit {
      this.reviewAfectada = undefined;
   }
 }
-
-
-/* agregar esto en resias de nuevo 
- @if (formVisible && cafeSeleccionado) { 
-                     Si falla, revisa el componente ReviewForm de tu compañera. -->
-                <app-review-form
-                    [cafe]="cafeSeleccionado"
-                    [review]="reviewEditar" 
-                    (resenaEnviada)="manejarResenaEnviada($event)"
-                    (cancelar)="cancelarResena()">
-                </app-review-form>
-            } 
-
-            <app-review-list
-                [modoVista]="'perfil'"
-                [reviewsUsuario]="allUserReviews"
-                [cafeMap]="cafeMap"
-                [mostrarBotonAgregar]="false"
-                (editarResena)="abrirEdicionReview($event)"
-                (resenaEliminada)="recargarReviewsUsuario()">
-            </app-review-list>  
-            
-            @if (allUserReviews.length === 0 && !loadingReviews) {
-                <div class="alert alert-light text-center mt-4">
-                    <i class="bi bi-chat-square-text me-2"></i>
-                    No hay reseñas visibles.
-                </div>
-            } */

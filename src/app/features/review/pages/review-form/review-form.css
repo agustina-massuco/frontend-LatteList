@@ -147,7 +147,7 @@ label {
   z-index: 1000;
   overflow: hidden; 
   overscroll-behavior: contain; 
-  touch-action: none; /
+  touch-action: none; 
 }
 
 .modal {
