@@ -1,3 +1,78 @@
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.tabs-container {
+    display: flex;
+    background: #e0e0e0;
+    padding: 4px;
+    border-radius: 20px;
+    gap: 5px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+    transition: 0.3s;
+}
+
+.tab-btn.active {
+    background: white;
+    color: #6F4E37; /* Tu marrón café */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-bar-wrapper {
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+}
+
+.pagination-wrapper {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Ajustes a la Card */
+.title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.visibility-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.visibility-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.owner-tag {
+    display: block;
+    font-size: 0.8rem;
+    color: #2c3e50;
+    font-weight: bold;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+    width: fit-content;
+}
 
 .list-container {
     max-width: 900px;
@@ -249,4 +324,71 @@
     opacity: 1;
     color: #d90429;
     transform: scale(1.1);
+}
+
+/* --- TABS --- */
+.tabs-container {
+    display: flex;
+    background: #e0e0e0;
+    padding: 4px;
+    border-radius: 20px;
+    gap: 5px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+    transition: 0.3s;
+    
+    /* ALINEACIÓN FLEX PARA SVG Y TEXTO */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Espacio entre texto e icono */
+}
+
+.tab-btn.active {
+    background: white;
+    color: #6F4E37;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Ajuste fino para el SVG dentro del botón */
+.tab-btn svg {
+    margin-top: -2px; /* A veces los iconos SVG tienen un baseline distinto */
+}
+
+/* --- BOTÓN VISIBILIDAD (CARD) --- */
+.visibility-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6F4E37; /* Color café para el icono */
+    opacity: 0.7;
+    transition: all 0.2s;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.visibility-btn:hover {
+    opacity: 1;
+    background-color: rgba(111, 78, 55, 0.1); /* Fondo sutil al hover */
+    transform: scale(1.1);
+}
+
+/* El resto de tu CSS se mantiene igual... */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }

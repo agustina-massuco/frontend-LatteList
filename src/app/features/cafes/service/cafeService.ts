@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, Observable } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of } from 'rxjs';
+import CafeModel from '../model/CafeModel';
 
 @Injectable({
   providedIn: 'root'
@@ -50,4 +51,22 @@ export class CafeService {
         const params = new HttpParams().append('search', searchTerm);
         return this.http.get<any[]>(this.apiUrl, { params });
     }
+
+    getCafesByIds(ids: number[]): Observable<CafeModel[]> {
+    if (!ids || ids.length === 0) {
+      return of([]);
+    }
+    const requests = ids.map(id => 
+      this.getCafeById(id).pipe(
+        catchError(error => {
+          console.error(`Error cargando café ${id}`, error);
+          return of(null); 
+        })
+      )
+    );
+
+    return forkJoin(requests).pipe(
+      map(results => results.filter(cafe => cafe !== null) as CafeModel[])
+    );
+  }
 }
