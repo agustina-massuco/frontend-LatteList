@@ -6,7 +6,6 @@
     align-items: center;
     width: 100%;
     min-height: 100vh; /* Ocupa toda la altura de la ventana */
-    background-color: #fdfbf7; /* Color de fondo suave (crema/café muy claro) */
     position: relative; /* Necesario para que el botón con absolute funcione bien */
     overflow: hidden; /* Evita scrolls innecesarios si la animación se sale un poco */
 }

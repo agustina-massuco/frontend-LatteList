@@ -442,8 +442,8 @@ export class ReviewList implements OnInit, OnChanges {
         this.actualizarEstadoReaccionLocal(review, nuevaReaccion);
 
         const obs = esMismo
-            ? this.reviewService.quitarReaccion(reviewId, userId)
-            : this.reviewService.reaccionar(reviewId, userId, nuevaReaccion);
+            ? this.reviewService.quitarReaccion(reviewId)
+            : this.reviewService.reaccionar(reviewId, nuevaReaccion);
 
         obs.pipe(
             catchError(err => {

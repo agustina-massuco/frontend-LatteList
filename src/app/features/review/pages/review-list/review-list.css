@@ -824,15 +824,11 @@
     opacity: 0.5;
 }
 
-/* --- ESTADO ACTIVO: UNIFICADO (Usa el color #5a2a0d) --- */
 
 .action-button.reaction-active {
-    /* Color marrón fuerte que quieres */
     color: #5a2a0d; 
     
-    /* Fondo muy claro basado en el marrón (puedes ajustarlo) */
     background-color: #f6f0ec; 
     
-    /* Borde en el mismo tono */
     border-color: #5a2a0d; 
 }
