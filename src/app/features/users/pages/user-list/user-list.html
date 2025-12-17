@@ -35,19 +35,17 @@
         }
       </div>
 
-      <div class="filters-row-inline">
+      <div class="filters-group-right">
         <select (change)="tipoFilter.set($any($event.target).value)" class="filter-select">
           <option value="">Rol de usuario</option>
           <option value="admin">Administrador</option>
           <option value="cliente">Cliente</option>
         </select>
-      </div>
 
-
-      <div class="filters-row-inline ms-2"> <select (change)="estadoFilter.set($any($event.target).value)" class="filter-select">
-            <option value="">Estados</option>
-            <option value="ACTIVO">Activos</option>
-            <option value="INACTIVO">Inactivos</option>
+        <select (change)="estadoFilter.set($any($event.target).value)" class="filter-select">
+          <option value="">Estados</option>
+          <option value="ACTIVO">Activos</option>
+          <option value="INACTIVO">Inactivos</option>
         </select>
       </div>
     </div>

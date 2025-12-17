@@ -103,6 +103,8 @@ export class ReviewList implements OnInit, OnChanges {
     indiceActual = 0;
     fotosActuales: string[] = [];
 
+    isAdmin = computed(() => this.auth.isAdmin());
+
     constructor(
         private reviewService: ReviewService,
         public auth: AuthService,
