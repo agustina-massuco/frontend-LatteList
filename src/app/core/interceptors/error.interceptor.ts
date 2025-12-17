@@ -13,13 +13,19 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       
       if (error.status === 403) {
         
-        if (!req.url.includes('/auth/login')) {
-            console.warn('Acceso prohibido detectado (403). Cerrando sesión...');
+        const msg = typeof error.error === 'string' ? error.error : error.error?.message;
+        
+        if (msg && (msg.toLowerCase().includes('suspendida') || 
+                    msg.toLowerCase().includes('bloqueada') || 
+                    msg.toLowerCase().includes('eliminada'))) {
             
-            authService.logout(); 
-            
-            router.navigate(['/auth/login']);
+            if (!req.url.includes('/auth/login')) {
+                console.warn('Suspensión de cuenta detectada. Cerrando sesión...');
+                authService.logout(); 
+                router.navigate(['/auth/login']);
+            }
         }
+   
       }
 
       return throwError(() => error);
