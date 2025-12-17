@@ -1,9 +1,9 @@
 @if (user) {
 <div class="container my-5">
     
-    <div class="row g-4 align-items-start"> 
+    <div class="row g-4 align-items-start" [class.justify-content-center]="user.tipoUser === 'ADMIN'"> 
         
-        <div class="col-md-4" [class.mx-auto]="user.tipoUser === 'ADMIN' && !viendoMiPerfil">
+        <div [ngClass]="user.tipoUser === 'ADMIN' ? 'col-md-6 col-lg-5' : 'col-md-4'">
             <div class="card shadow-lg p-4 h-100 profile-card-wrapper">
                 
                 @if (viendoMiPerfil || authSer.isAdmin()) {
@@ -96,24 +96,17 @@
             } 
 
             @if (!formVisible) {
-                <h4 class="mb-4 text-secondary">Historial de Reseñas</h4>
-
-                <app-review-list
-                    [modoVista]="'perfil'"
-                    [reviewsUsuario]="allUserReviews"
-                    [cafeMap]="cafeMap"
-                    [mostrarBotonAgregar]="false"
-                    [cafeId]="0" 
-                    (editarResena)="abrirEdicionReview($event)"
-                    (resenaEliminada)="recargarReviewsUsuario()">
-                </app-review-list>  
-                
-                @if (allUserReviews.length === 0 && !loadingReviews) {
-                    <div class="alert alert-light text-center mt-4">
-                        <i class="bi bi-chat-square-text me-2"></i>
-                        Este usuario aún no ha publicado reseñas.
-                    </div>
-                }
+                <div class="card shadow-lg p-4 profile-card-wrapper h-100">
+                    <app-review-list
+                        [modoVista]="'perfil'"
+                        [reviewsUsuario]="allUserReviews"
+                        [cafeMap]="cafeMap"
+                        [mostrarBotonAgregar]="false"
+                        [cafeId]="0" 
+                        (editarResena)="abrirEdicionReview($event)"
+                        (resenaEliminada)="recargarReviewsUsuario()">
+                    </app-review-list>
+                </div>
             }
         </div>
         }  
