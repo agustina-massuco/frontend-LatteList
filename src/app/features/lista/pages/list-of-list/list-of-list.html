@@ -61,22 +61,24 @@
                         
                         <div class="list-header">
                             <div class="title-row">
-                                <h3 class="list-name">{{ list.nombre }}</h3>
-                                @if(viewMode() === 'mias') {
-                                    <button class="visibility-btn" 
-                                            [title]="list.publica ? 'Pública' : 'Privada'"
-                                            (click)="$event.stopPropagation(); toggleVisibility(list)">
-                                        @if(list.publica){
-                                            <app-icon name="MUNDO"></app-icon>
+                                <div class="name-with-icon">
+                                    <h3 class="list-name">{{ list.nombre }}</h3>
+                                    @if(viewMode() === 'mias') {
+                                        <button class="visibility-btn" 
+                                                [title]="list.publica ? 'Pública' : 'Privada'"
+                                                (click)="$event.stopPropagation(); toggleVisibility(list)">
+                                            @if(list.publica){
+                                                <app-icon name="MUNDO"></app-icon>
 
-                                        } @else {
-                                            <app-icon name="CANDADO"></app-icon>
+                                            } @else {
+                                                <app-icon name="CANDADO"></app-icon>
 
-                                        }
-                                    </button>
-                                }
+                                            }
+                                        </button>
+                                    }
+                                </div>
                                 @if(viewMode() === 'explorar' && list.userNombre) {
-                                    <span class="owner-tag"> <app-icon name="PERSONA"></app-icon> {{ list.userNombre }}</span>
+                                    <span class="owner-tag"> <app-icon name="PERSONA"></app-icon> {{ list.userNombre }} @if(esListaMia(list)) { <span class="text-muted small">(yo)</span> }</span>
                                 }
                             </div>
                             

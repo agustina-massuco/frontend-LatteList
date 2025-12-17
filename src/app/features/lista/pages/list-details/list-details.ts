@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { ListService } from '../../service/list-service';
 import List from '../../model/List';
@@ -12,12 +12,14 @@ import { ConfirmacionModal } from '../../../../shared/confirmacion-modal/confirm
 import { AuthService } from '../../../../core/services/auth-service'; 
 import { CafeService } from '../../../cafes/service/cafeService';
 import { IconComponent } from '../../../../shared/Icons/app-icon-componet';
+import { PaginatorComponent } from '../../../../shared/paginator/paginator';
+import { ListItemComponent } from '../../../../shared/list-item/list-item';
 
 
 @Component({
   selector: 'app-list-details',
   standalone: true,
-  imports: [RouterLink, DatePipe, CommonModule, FormsModule, PillsComponent, ConfirmacionModal, IconComponent],
+  imports: [RouterLink, DatePipe, CommonModule, FormsModule, PillsComponent, ConfirmacionModal, IconComponent, PaginatorComponent, ListItemComponent],
   templateUrl: './list-details.html',
   styleUrl: './list-details.css',
 })
@@ -31,10 +33,16 @@ export class ListDetails implements OnInit {
   isOwner: boolean = false;
   clonar: boolean = false;
  
-  menuCafeAbiertoId: string | number | null = null; 
+  menuCafeAbiertoId: string | number | null = null;
   editandoNombre: boolean = false;
   nombreListaEditado: string = '';
   mostrarConfirmacionNombre: boolean = false;
+  mostrarConfirmacionEliminar: boolean = false;
+
+  paginaActual = signal(1);
+  cafesPorPagina = 10;
+  cafesPaginados = signal<Cafe[]>([]);
+  totalPaginas = signal(1);
 
   
   constructor(
@@ -49,6 +57,7 @@ export class ListDetails implements OnInit {
   ngOnInit(): void {
     this.route.params.pipe(
       tap(() => {
+        console.log('🔄 Iniciando carga - reseteando this.list');
         this.loading = true;
         this.errorMessage = '';
         this.list = undefined; 
@@ -70,17 +79,27 @@ export class ListDetails implements OnInit {
 
         this.list = list;
         this.nombreListaEditado = list.nombre;
+        console.log('📝 Lista asignada:', this.list);
 
         const currentUser = this.authService.getUserFromToken();
         const listOwnerId = list.idUser ? String(list.idUser) : null;
         const currentUserId = currentUser?.id ? String(currentUser.id) : null;
 
+        console.log('🔍 DEBUG isOwner:');
+        console.log('  - currentUser:', currentUser);
+        console.log('  - currentUserId:', currentUserId);
+        console.log('  - list.idUser:', list.idUser);
+        console.log('  - listOwnerId:', listOwnerId);
+        
         this.isOwner = currentUserId !== null && listOwnerId !== null && currentUserId === listOwnerId;
+        console.log('  - isOwner result:', this.isOwner);
 
         if (!list.idCafes || list.idCafes.length === 0) {
+            console.log('⚠️ Lista sin cafés, retornando array vacío. this.list aún existe:', !!this.list);
             return of([]);
         }
         
+        console.log('📞 Llamando getCafesByIds. this.list existe:', !!this.list);
         return this.cafeService.getCafesByIds(list.idCafes.map(Number));
       }),
       catchError(error => {
@@ -96,7 +115,9 @@ export class ListDetails implements OnInit {
       })
     ).subscribe((cafes: any) => {
       this.cafes = Array.isArray(cafes) ? cafes : [];
-      this.loading = false; 
+      this.actualizarPaginacion();
+      this.loading = false;
+      console.log('✅ Carga completa - loading:', this.loading, 'list:', this.list, 'isOwner:', this.isOwner);
     });
 
     document.addEventListener('click', (event) => {
@@ -172,6 +193,35 @@ export class ListDetails implements OnInit {
 
   cerrarMenuCafe(): void {
     this.menuCafeAbiertoId = null;
+  }
+
+  eliminarCafeDeLista(cafeId: number | string | undefined): void {
+    if (!cafeId || !this.list) return;
+
+    this.cerrarMenuCafe();
+
+    const cafeIdNum = Number(cafeId);
+    const nuevosCafes = this.list.idCafes.filter(id => Number(id) !== cafeIdNum);
+    const nuevosVisitados = (this.list.idCafesVisitados || []).filter(id => Number(id) !== cafeIdNum);
+
+    const listaActualizada: List = {
+      ...this.list,
+      idCafes: nuevosCafes,
+      idCafesVisitados: nuevosVisitados,
+    };
+
+    this.listService.putList(listaActualizada).subscribe({
+      next: (res) => {
+        this.list = res;
+        this.cafes = this.cafes.filter(cafe => Number(cafe.id) !== cafeIdNum);
+        this.actualizarPaginacion();
+        this.tostada.info('Café eliminado de la lista');
+      },
+      error: (err) => {
+        console.error('Error al eliminar café:', err);
+        this.tostada.error('Error al eliminar el café');
+      }
+    });
   }
 
   cancelarEdicion(): void {
@@ -271,6 +321,53 @@ export class ListDetails implements OnInit {
         this.tostada.show(`Error al remover "${cafeNombre}": ${err.message}`, 'error');
       },
     });
+    this.actualizarPaginacion();
+  }
+
+  confirmarEliminarLista(): void {
+    this.mostrarConfirmacionEliminar = true;
+  }
+
+  cancelarEliminarLista(): void {
+    this.mostrarConfirmacionEliminar = false;
+  }
+
+  eliminarLista(): void {
+    if (!this.list) return;
+
+    this.listService.deleteList(this.list.id).subscribe({
+      next: () => {
+        this.tostada.success('Lista eliminada correctamente');
+        this.router.navigate(['/lista']);
+      },
+      error: (err) => {
+        console.error('Error al eliminar lista:', err);
+        this.tostada.error('Error al eliminar la lista');
+        this.mostrarConfirmacionEliminar = false;
+      }
+    });
+  }
+
+  actualizarPaginacion() {
+    const totalPags = Math.ceil(this.cafes.length / this.cafesPorPagina);
+    this.totalPaginas.set(totalPags);
+    
+    const inicio = (this.paginaActual() - 1) * this.cafesPorPagina;
+    const fin = inicio + this.cafesPorPagina;
+    this.cafesPaginados.set(this.cafes.slice(inicio, fin));
+  }
+
+  onPageChange(direction: 'next' | 'previous') {
+    if (direction === 'next' && this.paginaActual() < this.totalPaginas()) {
+      this.paginaActual.update(p => p + 1);
+    } else if (direction === 'previous' && this.paginaActual() > 1) {
+      this.paginaActual.update(p => p - 1);
+    }
+    this.actualizarPaginacion();
+  }
+
+  onCafeClick(cafeId: string | number) {
+    this.router.navigate(['/cafes', cafeId]);
   }
 
 }

@@ -12,6 +12,7 @@ import Cafe from '../../../cafes/model/CafeModel';
 import { CafeService } from '../../../cafes/service/cafeService';
 import List from '../../model/List';
 import { IconComponent } from '../../../../shared/Icons/app-icon-componet';
+import { AuthService } from '../../../../core/services/auth-service';
 
 @Component({
   selector: 'app-list-of-list',
@@ -52,7 +53,8 @@ export class ListOfList implements OnInit {
     public listSer: ListService,
     private cafeSer: CafeService,
     private tostada: ToastService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -159,6 +161,12 @@ export class ListOfList implements OnInit {
       this.tempSearchTerm.set('');
       if(this.searchInputComponent) this.searchInputComponent.clear();
       this.page.set(1);
+  }
+
+  esListaMia(lista: List): boolean {
+    const currentUser = this.authService.getUserFromToken();
+    if (!currentUser?.id || !lista.idUser) return false;
+    return String(currentUser.id) === String(lista.idUser);
   }
 
   onPageChange(dir: 'next' | 'previous') {

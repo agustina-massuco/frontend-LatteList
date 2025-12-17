@@ -29,6 +29,29 @@
     color: white;
 }
 
+/* --- Cafe List - unified white background like cafe-list --- */
+.cafe-list {
+    background: white;
+    border-radius: 16px;
+    overflow: visible;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid #dbdbdb;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+/* No Results */
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.no-results p {
+    font-size: 18px;
+    margin: 0;
+}
+
 /* --- Header y Título --- */
 
 .list-title {
@@ -51,6 +74,19 @@
     transform: scale(1.3);
 }
 
+.delete-list-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+    height: 45px;
+}
+
+.delete-list-btn:hover {
+    transform: scale(1.1);
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
 .title-edit-input {
     border: none;
     background: transparent;
@@ -59,8 +95,9 @@
     font-weight: 800;
     color: var(--color-cafe-oscuro);
     border-bottom: 3px solid var(--color-cafe-medio);
-    text-align: center;
-    width: 100%;
+    text-align: left;
+    width: auto;
+    max-width: 70%;
     padding: 0;
     margin: 0;
     line-height: 1.2;
@@ -122,8 +159,7 @@
 .menu-acciones-cafe {
     position: absolute;
     right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 10px;
     z-index: 100;
 }
 
@@ -146,7 +182,8 @@
 .menu-desplegable {
     position: absolute;
     right: 0;
-    top: 40px;
+    top: 100%;
+    margin-top: 5px;
     background: white;
     border: 1px solid var(--color-crema-oscuro);
     border-radius: 8px;
@@ -207,4 +244,37 @@
 .btn-outline-brown:hover {
     background-color: var(--color-cafe-medio);
     color: white;
+}
+
+/* --- Discover Button Styles (from home) --- */
+.discover-button-container {
+    position: absolute;
+    right: 5%;  
+    top: 15vh;  
+    z-index: 1000;
+}
+
+.discover-button {
+    background-color: #79462d; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.discover-button:hover {
+    background-color: #EEDBB6; 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.discover-button:active {
+    transform: translateY(0); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

@@ -1,69 +1,102 @@
 <div class="container my-4 animate__animated animate__fadeIn">
   <div class="row justify-content-center">
-    <div class="col-12 col-lg-8">
+    <div class="col-12 col-md-10 col-lg-7">
      
       <div class="card shadow-sm mb-4 bg-cream">
         <div class="card-body position-relative">
           
-            @if (!loading && list && !isOwner) {
-                <button class="btn btn-sm btn-outline-brown position-absolute top-0 end-0 m-3" 
-                        (click)="clonarLista()" 
-                        [disabled]="clonar">
-                    <i class="bi bi-save"></i> {{ clonar ? 'Guardando...' : 'Guardar en mis listas' }}
-                </button>
-            }
-
             @if (loading) {
             } @else if (list) {
                 
-                <div class="d-flex justify-content-center align-items-center list-title-wrapper mt-2">
-                    @if (isOwner && editandoNombre) {
-                        <input [(ngModel)]="nombreListaEditado" (blur)="confirmarCambioNombre()" (keydown.enter)="confirmarCambioNombre()" class="title-edit-input text-center">
-                    } @else {
-                        <h1 class="card-title text-center mb-0 list-title">{{ list.nombre }}</h1>
-                        @if (isOwner) {
-                            <span class="ms-2 list-edit-icon" (click)="iniciarEdicionNombre()"><app-icon name="PENCIL"></app-icon></span>
+                <div class="d-flex justify-content-between align-items-center list-title-wrapper mt-2">
+                    <div class="d-flex flex-column align-items-start" style="min-width: 0;">
+                        @if (isOwner && editandoNombre) {
+                            <input [(ngModel)]="nombreListaEditado" (blur)="confirmarCambioNombre()" (keydown.enter)="confirmarCambioNombre()" class="title-edit-input">
+                        } @else {
+                            <div class="d-flex align-items-center">
+                                <h1 class="card-title mb-0 list-title">{{ list.nombre }}</h1>
+                                @if (isOwner) {
+                                    <span class="ms-2 list-edit-icon" (click)="iniciarEdicionNombre()"><app-icon name="PENCIL"></app-icon></span>
+                                }
+                            </div>
                         }
+                        @if (!isOwner && list.userNombre) {
+                            <p class="text-muted small mt-1 mb-0" style="padding-left: 0;">Creada por {{ list.userNombre }}</p>
+                        }
+                    </div>
+                    
+                    @if (isOwner) {
+                        <button class="btn btn-link text-danger p-2 ms-3 delete-list-btn" 
+                                (click)="confirmarEliminarLista()" 
+                                title="Eliminar lista"
+                                style="flex-shrink: 0;">
+                            <app-icon name="BASURA"></app-icon>
+                        </button>
+                    } @else {
+                        <button class="btn btn-sm btn-outline-brown" 
+                                (click)="clonarLista()" 
+                                [disabled]="clonar"
+                                style="flex-shrink: 0;">
+                            <i class="bi bi-save"></i> {{ clonar ? 'Guardando...' : 'Guardar en mis listas' }}
+                        </button>
                     }
                 </div>
-                
-                @if (!isOwner && list.userNombre) {
-                    <p class="text-center text-muted small mt-1">Creada por {{ list.userNombre }}</p>
-                }
             }
         </div>
       </div>
      
       @if (!loading && list) {
-          @for (cafe of cafes; track cafe.id) {
-            <div class="d-flex align-items-center p-3 rounded shadow-sm list-cafe-item bg-white mb-3"
-                 [ngClass]="{'cafe-visitado': isOwner && esVisitado(cafe.id)}"> <!-- Solo colorear visitados si es mía (o si clonás la lógica) -->
-                 
-                 <div class="list-item-image">
-                    <span class="placeholder-letter">{{ cafe.nombre.charAt(0) }}</span>
-                 </div>
-
-                 <a [routerLink]="['/cafes', cafe.id]" class="text-decoration-none text-dark flex-grow-1 ps-3">
-                    <h5 class="mb-1 text-brown fw-bold">{{ cafe.nombre }}</h5>
-                    <p class="text-muted mb-0 small">{{ cafe.direccion }}</p>
-                 </a>
-
-                 @if (isOwner) {
-                     <div class="menu-acciones-cafe">
-                        <button class="menu-toggle" (click)="toggleMenuCafe(cafe.id!)">⋮</button>
-                        @if (menuCafeAbiertoId === cafe.id) {
-                            <div class="menu-desplegable shadow-sm show-menu">
-                                <button (click)="marcarComoVisitado(cafe.id)">
-                                    {{ esVisitado(cafe.id) ? 'No visitado' : 'Ya fui!' }}
-                                </button>
-                                <button class="text-danger" (click)="removerCafeDeLista(cafe.id)">Borrar</button>
-                            </div>
-                        }
-                     </div>
-                 }
+        <div class="cafe-list">
+          @for (cafe of cafesPaginados(); track cafe.id) {
+            <div style="position: relative;">
+              <app-list-item 
+                [item]="{
+                  image: '',
+                  title: cafe.nombre,
+                  description: cafe.direccion || '',
+                  action: isOwner ? '⋮' : '',
+                  inactive: isOwner && esVisitado(cafe.id)
+                }"
+                (itemClick)="onCafeClick(cafe.id!)"
+                (actionClick)="toggleMenuCafe(cafe.id!)">
+              </app-list-item>
+              
+              @if (isOwner && menuCafeAbiertoId === cafe.id) {
+                <div class="menu-acciones-cafe">
+                  <div class="menu-desplegable show-menu">
+                    <button (click)="marcarComoVisitado(cafe.id)">
+                      <i class="bi" [ngClass]="esVisitado(cafe.id) ? 'bi-check-circle-fill' : 'bi-check-circle'"></i>
+                      {{ esVisitado(cafe.id) ? 'Desmarcar visitado' : 'Marcar como visitado' }}
+                    </button>
+                    <button (click)="eliminarCafeDeLista(cafe.id)" style="color: #dc3545;">
+                      <i class="bi bi-trash"></i>
+                      Eliminar de la lista
+                    </button>
+                  </div>
+                </div>
+              }
             </div>
           }
+          @if (cafesPaginados().length === 0) {
+            <div class="no-results">
+              <p>Esta lista no tiene cafés aún</p>
+            </div>
+          }
+        </div>
+
+        <app-paginator 
+          [currentPage]="paginaActual()" 
+          [totalPages]="totalPaginas()" 
+          (pageChange)="onPageChange($event)">
+        </app-paginator>
       }
+
+      <div class="text-center mt-4">
+        <button class="discover-button" [routerLink]="['/lista']">
+          <i class="bi bi-arrow-left me-2"></i>
+          Volver a mis listas
+        </button>
+      </div>
 
     </div>
   </div>
@@ -78,4 +111,15 @@
   (confirmar)="confirmarGuardarNombre()"
   (cancelar)="cancelarGuardarNombre()"
   (overlayClick)="cancelarGuardarNombre()"
+></app-confirmacion-modal>
+
+<app-confirmacion-modal
+  [visible]="mostrarConfirmacionEliminar"
+  titulo="Eliminar lista"
+  mensaje="¿Estás segura de que quieres eliminar esta lista? Esta acción no se puede deshacer."
+  textoConfirmar="Sí, eliminar"
+  textoCancelar="Cancelar"
+  (confirmar)="eliminarLista()"
+  (cancelar)="cancelarEliminarLista()"
+  (overlayClick)="cancelarEliminarLista()"
 ></app-confirmacion-modal>
