@@ -1,4 +1,4 @@
-<div class="discover-container">
+<div class="discover-container ">
     
   <div class="discover-button-container">
     <button class="discover-button" (click)="cerrarModal()">
@@ -6,7 +6,7 @@
     </button>
   </div>
 
-  <app-spin-wheel 
+  <app-spin-wheel class="animate__animated animate__rollIn"
     [cafeterias]="cafeteriasReducidas()"
     (selected)="onCafeSelected($event)">
   </app-spin-wheel>

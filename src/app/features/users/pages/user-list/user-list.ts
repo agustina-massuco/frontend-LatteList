@@ -112,7 +112,7 @@ constructor(
     const users = this.userSer.users();
     
     const coincidencias = users.filter(u => {
-      if (u.estado !== 'ACTIVO') return false; 
+      //el back a viene con users filtrados activos e inactivos
 
       return u.nombre.toLowerCase().includes(term) ||
              u.apellido.toLowerCase().includes(term) ||
@@ -166,7 +166,7 @@ constructor(
     let description = isAdmin ? `ADMIN - ${user.email}` : user.email;
 
     if (user.estado === 'INACTIVO') {
-        description += ' (Inactivo)';
+        description += ' (BANEADA)';
     }
 
 
@@ -180,7 +180,7 @@ constructor(
       image: user.fotoPerfil, 
       title: displayTitle,
       description: description,
-      inactive: user.estado === 'INACTIVO', 
+      inactive: false, 
       action: undefined 
     };
   }

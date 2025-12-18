@@ -6,11 +6,12 @@ import { AuthService } from '../../../../core/services/auth-service';
 import { UserService } from '../../service/user-service';
 import User from '../../model/User';
 import { ToastService } from '../../../../core/services/toast.service';
+import { IconComponent } from "../../../../shared/Icons/app-icon-componet";
 
 @Component({
   selector: 'app-user-registro',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, IconComponent],
   templateUrl: './user-registro.html',
   styleUrl: './user-registro.css',
 })
@@ -31,6 +32,15 @@ export class UserRegistro implements OnInit {
     return isValid ? null : { 'whitespace': true };
   }
 
+  static soloLetrasValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null; 
+    
+    const valid = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/.test(value);
+    
+    return valid ? null : { 'onlyLetters': true };
+  }
+
   static passwordValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value || '';
     if (!value) return null;
@@ -39,7 +49,7 @@ export class UserRegistro implements OnInit {
     if (!/[A-Z]/.test(value)) errors['noMayuscula'] = true;
     if (!/[a-z]/.test(value)) errors['noMinuscula'] = true;
     if (!/\d/.test(value)) errors['noNumero'] = true;
-    if (!/[@$!%*?&]/.test(value)) errors['noEspecial'] = true;
+    if (!/[@$!%*?&#.\-_]/.test(value)) errors['noEspecial'] = true;
     
     return Object.keys(errors).length ? errors : null;
   }
@@ -168,8 +178,8 @@ export class UserRegistro implements OnInit {
     if (this.mode === 'admin') tipoUserDefecto = 'admin';
 
     const formControls: any = {
-      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), UserRegistro.noWhitespaceValidator]],
-      apellido: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), UserRegistro.noWhitespaceValidator]],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), UserRegistro.noWhitespaceValidator, UserRegistro.soloLetrasValidator]],
+      apellido: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), UserRegistro.noWhitespaceValidator, UserRegistro.soloLetrasValidator]],
       email: ['', [Validators.required, Validators.email]],
       tipoUser: [tipoUserDefecto],
       fotoPerfil: []

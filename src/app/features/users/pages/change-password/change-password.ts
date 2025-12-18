@@ -8,11 +8,12 @@ import { UserRegistro } from '../user-registro/user-registro';
 import { ModalDrawerComponent } from '../../../../shared/modal-drawer/modal-drawer.component';
 import { ForgotPassword } from '../forgot-password/forgot-password';
 import { CommonModule } from '@angular/common';
+import { IconComponent } from '../../../../shared/Icons/app-icon-componet';
 
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ModalDrawerComponent, ForgotPassword],
+  imports: [ReactiveFormsModule, CommonModule, ModalDrawerComponent, ForgotPassword, IconComponent],
   templateUrl: './change-password.html',
   styleUrl: './change-password.css',
 })

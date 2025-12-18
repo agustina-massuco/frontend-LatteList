@@ -12,6 +12,7 @@ import Review from '../../../review/model/Review';
 import Cafe from '../../../cafes/model/CafeModel';
 import { ReviewService } from '../../../review/service/review-service';
 import { CafeService } from '../../../cafes/service/cafeService';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-user-details',
@@ -55,7 +56,8 @@ export class UserDetails implements OnInit {
     private userSer: UserService,
     private router: Router,
     private reviewSer: ReviewService, 
-    private cafeSer: CafeService
+    private cafeSer: CafeService,
+    private tostada: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -234,19 +236,72 @@ export class UserDetails implements OnInit {
     if (this.viendoMiPerfil) document.getElementById('file-selector')?.click(); 
   }
 
-  onFileSelected(event: any) { 
+  async onFileSelected(event: any) { 
     const file = event.target.files[0];
-    if (file && this.user) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            const nuevaFoto = reader.result as string;
-            this.userSer.actualizarFotoPerfil(nuevaFoto).subscribe(u => {
-                 this.authSer.actualizarToken(u);
-                 this.user!.fotoPerfil = nuevaFoto;
-            });
-        };
+    
+    if (!file || !this.user) return;
+
+    if (!file.type.startsWith('image/')) {
+        console.warn('No es una imagen válida');
+        return;
     }
+
+    try {
+        const base64Comprimido = await this.comprimirImagen(file);
+        
+        const usuarioActualizado: User = {
+            ...this.user,
+            fotoPerfil: base64Comprimido
+        };
+
+        this.userSer.putUser(usuarioActualizado).subscribe({
+            next: (uResponse) => {
+                this.authSer.actualizarToken(uResponse); 
+                this.user = uResponse; 
+                this.tostada.success('Foto actualizada correctamente');
+            },
+            error: (err) => {
+                console.error('Error al subir la foto:', err);
+                this.tostada.error('Error al actualizar la foto');
+            }
+        });
+    } catch (error) {
+        console.error('Error al procesar la imagen:', error);
+    }
+  }
+
+  private comprimirImagen(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      
+      reader.onload = (event: any) => {
+        const img = new Image();
+        img.src = event.target.result;
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 400;
+          const scaleSize = MAX_WIDTH / img.width;
+          
+          const finalWidth = (img.width > MAX_WIDTH) ? MAX_WIDTH : img.width;
+          const finalHeight = (img.width > MAX_WIDTH) ? (img.height * scaleSize) : img.height;
+
+          canvas.width = finalWidth;
+          canvas.height = finalHeight;
+
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, finalWidth, finalHeight);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.7); 
+          resolve(dataUrl);
+        };
+        
+        img.onerror = (error) => reject(error);
+      };
+      
+      reader.onerror = (error) => reject(error);
+    });
   }
 
   abrirEdicionReview(review: Review) {

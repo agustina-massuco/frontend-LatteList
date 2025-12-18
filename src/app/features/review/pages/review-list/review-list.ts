@@ -254,7 +254,7 @@ export class ReviewList implements OnInit, OnChanges {
     }
 
     verPerfilUsuario(id: string) {
-        this.router.navigate(['/auth/perfil', id]);
+        this.router.navigate(['/usuarios/perfil', id]);
     }
 
     onUserNameClick(event: Event, userId: number) {
@@ -379,9 +379,15 @@ export class ReviewList implements OnInit, OnChanges {
                     this.cargarDataInicial();
                 }
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error al ejecutar acción de reseña:', err);
-                this.mostrarMensaje('Error al actualizar la reseña');
+                const errorMsg = err.error?.message || 'La reseña ya no está disponible o ha sido eliminada.';
+                this.mostrarMensaje(errorMsg);
+                if (this.modoVista === 'perfil') {
+                    this.reseñasActualizadas.emit(); 
+                } else {
+                    this.cargarDataInicial(); 
+                }
             }
         });
 

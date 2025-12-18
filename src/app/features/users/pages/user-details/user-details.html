@@ -1,7 +1,7 @@
 @if (user) {
-<div class="container my-5">
+<div class="container my-5" >
     
-    <div class="row g-4 align-items-start" [class.justify-content-center]="user.tipoUser === 'ADMIN'"> 
+    <div class="row g-4 align-items-start animate__animated animate__fadeInDown" [class.justify-content-center]="user.tipoUser === 'ADMIN'"> 
         
         <div [ngClass]="user.tipoUser === 'ADMIN' ? 'col-md-6 col-lg-5' : 'col-md-4'">
             <div class="card shadow-lg p-4 h-100 profile-card-wrapper">
