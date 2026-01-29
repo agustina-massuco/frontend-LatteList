@@ -1,59 +1,113 @@
-# FrontendLattelist
+# ☕ LatteList - Frontend Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.2.
+![Angular](https://img.shields.io/badge/Angular-17+-red)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.x-purple)
+![MapLibre](https://img.shields.io/badge/Maps-MapLibre_GL-brightgreen)
 
-## Development server
+Interfaz de usuario para **LatteList**, una Single Page Application (SPA) reactiva y moderna diseñada para la comunidad cafetera de Mar del Plata.
 
-To start a local development server, run:
 
+
+## Características Visuales
+* **Mapa Interactivo:** Integración con MapLibre GL para geolocalización de cafés.
+* **Estado Reactivo:** Uso de **Angular Signals** para una gestión de estado eficiente.
+* **Diseño Responsivo:** Maquetación con Bootstrap 5 adaptable a móviles y tablets.
+* **Animaciones:** Experiencia dinámica mediante SVGs animados.
+
+
+## Stack Tecnológico
+
+- **Framework:** Angular 17+ (Standalone Components)
+- **Lenguaje:** TypeScript
+- **Estilos:** Bootstrap 5 + CSS3
+- **Iconos:** Bootstrap Icons
+- **Mapas:** MapLibre GL
+- **Estado y asincronía:** RxJS + Angular Signals
+- **Comunicación:** HttpClient (API REST)
+
+
+## Seguridad
+
+- Guards funcionales:
+  - `authGuard`
+  - `adminGuard`
+  - `clientGuard`
+- Interceptores:
+  - AuthInterceptor (JWT)
+  - ErrorInterceptor (403 / sesión expirada)
+
+
+## 📸 Capturas de Pantalla
+
+### 🏠 Home
+![Home](assets/home.png)
+
+### 🗺️ Mapa de Cafés
+![Mapa](assets/mapa.png)
+
+### 👤 Perfil de Usuario
+![Perfil](assets/perfil.png)
+
+
+## Rutas Principales
+
+- `/auth/login`
+- `/auth/registrarse`
+- `/cafes`
+- `/cafes/map`
+- `/cafes/:id`
+- `/lista`
+- `/usuarios/perfil`
+- `/usuarios/listado` (ADMIN)
+
+
+
+
+##  Funcionalidades
+
+###  Usuarios
+- Registro e inicio de sesión
+- Recuperación de contraseña
+- Edición de perfil
+- Visualización de reseñas propias
+
+###  Cafés
+- Listado con filtros
+- Mapa interactivo
+- Ruleta aleatoria de cafés
+- Vista detallada con reseñas
+
+###  Reseñas
+- Crear, editar y eliminar reseñas
+- Likes y dislikes
+- Visualización por café y por usuario
+
+###  Listas
+- Crear listas personalizadas
+- Marcar cafés como visitados
+- Listas públicas y privadas
+- Clonar listas de otros usuarios
+
+### Administración
+- Gestión de usuarios
+- Moderación de reseñas
+- Alta de nuevos administradores
+
+
+
+##  Instalación y Ejecución
+
+### Requisitos
+- Node.js (LTS)
+- Angular CLI
+
+### Pasos
 ```bash
+npm install
 ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Aplicación disponible en http://localhost:4200
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Licencia
+Proyecto académico – Tecnicatura Universitaria en Programación (UTN).
