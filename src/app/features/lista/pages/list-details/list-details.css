@@ -142,16 +142,24 @@
 
 /* --- Estados (Visitado) --- */
 .cafe-visitado {
-    background-color: var(--color-visitado-bg) !important;
-    border-left: 6px solid var(--color-cafe-oscuro) !important;
-    opacity: 0.9;
+    /* Quitamos el border-left para que no aparezca la raya marrón */
+    border-left: none !important; 
+    
+    /* Un fondo apenas más oscuro para que se note la diferencia */
+    background-color: #f2f2f2 !important; 
+    
+    /* Bajamos la opacidad para dar efecto de "completado" */
+    opacity: 0.7;
+    
+    /* Aseguramos que el cursor siga siendo un puntero para abrir el menú */
+    cursor: pointer;
 }
 
-.cafe-visitado .text-brown,
-.cafe-visitado h5 {
-    color: #999 !important;
-    text-decoration: line-through;
-    font-weight: normal !important;
+.cafe-visitado .list-item-title, 
+.cafe-visitado h5, 
+.cafe-visitado p {
+    color: #555 !important; /* Un gris oscuro, no tan claro como el de antes */
+    text-decoration: line-through; /* Mantenemos el tachado si te gusta */
 }
 
 /* --- Menú Contextual (Tres Puntos) --- */
@@ -160,7 +168,8 @@
     position: absolute;
     right: 15px;
     top: 10px;
-    z-index: 100;
+    z-index: 1051; /* Un número alto para que gane a cualquier otro elemento */
+    pointer-events: auto !important; /* Fuerza que siempre reciba clics */
 }
 
 .menu-toggle {

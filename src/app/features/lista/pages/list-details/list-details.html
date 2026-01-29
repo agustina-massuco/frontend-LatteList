@@ -55,8 +55,9 @@
                   title: cafe.nombre,
                   description: cafe.direccion || '',
                   action: isOwner ? '⋮' : '',
-                  inactive: isOwner && esVisitado(cafe.id)
+                  inactive: false
                 }"
+                [class.cafe-visitado]="esVisitado(cafe.id)"
                 (itemClick)="onCafeClick(cafe.id!)"
                 (actionClick)="toggleMenuCafe(cafe.id!)">
               </app-list-item>

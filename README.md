@@ -38,17 +38,17 @@ Interfaz de usuario para **LatteList**, una Single Page Application (SPA) reacti
   - ErrorInterceptor (403 / sesión expirada)
 
 
-## 📸 Capturas de Pantalla
+### Home
+![Home](capturas/home.png)
 
-### 🏠 Home
-![Home](assets/home.png)
+### Mapa de Cafés
+![Mapa](capturas/mapa.png)
 
-### 🗺️ Mapa de Cafés
-![Mapa](assets/mapa.png)
+### Perfil de Usuario
+![Perfil](capturas/perfil.png)
 
-### 👤 Perfil de Usuario
-![Perfil](assets/perfil.png)
-
+### Ruleta
+![Ruleta](capturas/ruleta.png)
 
 ## Rutas Principales
 
@@ -109,5 +109,8 @@ ng serve
 
 Aplicación disponible en http://localhost:4200
 
-## Licencia
+##  Licencia
 Proyecto académico – Tecnicatura Universitaria en Programación (UTN).
+ 
+
+

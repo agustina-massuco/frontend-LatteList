@@ -62,6 +62,7 @@ export class AuthService {
 
   getRoleFromStorage(): string {
     const user = this.getUserFromToken();
+    console.log('Objeto usuario recuperado del token:', user);
     return user?.tipoUser?.toLowerCase() || '';
   }
 
