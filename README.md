@@ -1,15 +1,15 @@
 # ☕ LatteList - Frontend Application
 
-![Angular](https://img.shields.io/badge/Angular-17+-red)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5.x-purple)
-![MapLibre](https://img.shields.io/badge/Maps-MapLibre_GL-brightgreen)
+![Angular](https://img.shields.io/badge/Angular-20-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.x-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![MapLibre](https://img.shields.io/badge/Maps-MapLibre_GL-brightgreen?style=for-the-badge)
 
 Interfaz de usuario para **LatteList**, una Single Page Application (SPA) reactiva y moderna diseñada para la comunidad cafetera de Mar del Plata.
 
 
 
-## Características Visuales
+## Características Destacadas
 * **Mapa Interactivo:** Integración con MapLibre GL para geolocalización de cafés.
 * **Estado Reactivo:** Uso de **Angular Signals** para una gestión de estado eficiente.
 * **Diseño Responsivo:** Maquetación con Bootstrap 5 adaptable a móviles y tablets.
@@ -18,9 +18,10 @@ Interfaz de usuario para **LatteList**, una Single Page Application (SPA) reacti
 
 ## Stack Tecnológico
 
-- **Framework:** Angular 17+ (Standalone Components)
+- **Framework:** Angular 20 (Arquitectura Standalone)
 - **Lenguaje:** TypeScript
-- **Estilos:** Bootstrap 5 + CSS3
+- **Compilador:** esbuild 
+- **Estilos:** Bootstrap 5 + CSS3 + Animate.css
 - **Iconos:** Bootstrap Icons
 - **Mapas:** MapLibre GL
 - **Estado y asincronía:** RxJS + Angular Signals
@@ -29,26 +30,19 @@ Interfaz de usuario para **LatteList**, una Single Page Application (SPA) reacti
 
 ## Seguridad
 
-- Guards funcionales:
-  - `authGuard`
-  - `adminGuard`
-  - `clientGuard`
-- Interceptores:
-  - AuthInterceptor (JWT)
-  - ErrorInterceptor (403 / sesión expirada)
+El acceso está protegido mediante lógica avanzada en el cliente:
+- **Guards funcionales:** `authGuard`, `adminGuard` y `clientGuard`.
+- **Interceptores:** - `AuthInterceptor`: Gestión automática de **JWT** en cabeceras HTTP.
+  - `ErrorInterceptor`: Manejo centralizado de errores (401/403) y cierre de sesión.
 
 
-### Home
-![Home](capturas/home.png)
+## Vistas principales 
 
-### Mapa de Cafés
-![Mapa](capturas/mapa.png)
+| Home | Mapa de Cafés | Perfil de Usuario |
+| :---: | :---: | :---: |
+| ![Home](capturas/home.png) | ![Mapa](capturas/mapa.png) | ![Perfil](capturas/perfil.png) |
 
-### Perfil de Usuario
-![Perfil](capturas/perfil.png)
-
-### Ruleta
-![Ruleta](capturas/ruleta.png)
+> No te olvides de probar la **Ruleta de Cafés** para descubrimientos aleatorios ![Ruleta](capturas/ruleta.png)
 
 ## Rutas Principales
 
@@ -60,8 +54,6 @@ Interfaz de usuario para **LatteList**, una Single Page Application (SPA) reacti
 - `/lista`
 - `/usuarios/perfil`
 - `/usuarios/listado` (ADMIN)
-
-
 
 
 ##  Funcionalidades
@@ -109,8 +101,15 @@ ng serve
 
 Aplicación disponible en http://localhost:4200
 
+```
 ##  Licencia
 Proyecto académico – Tecnicatura Universitaria en Programación (UTN).
+
+**Desarrollado por:**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Agustina_Massuco-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/agustina-massuco/)
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Cecilia_Novelli-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/cecilia-novelli-93a4bb247/)
  
 
 
