@@ -4,12 +4,13 @@ import { catchError, Observable, throwError } from 'rxjs';
 import ReviewResponse from '../model/Review'; 
 import ReviewRequest from '../model/ReviewRequest';
 import { AuthService } from '../../../core/services/auth-service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReviewService {
-  private baseUrl = 'http://localhost:8080/reviews';
+  private baseUrl = `${environment.apiUrl}/reviews`;
 
   constructor(private http: HttpClient,
     private auth:AuthService

@@ -5,13 +5,14 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import LoginResponseJava from '../model/LoginResponseJava';
 import User from '../../features/users/model/User';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private readonly apiUrl = 'http://localhost:8080/auth';
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
 
   private loggedIn = signal<boolean>(this.hasToken());
   private userRole = signal<string>(this.getRoleFromStorage());

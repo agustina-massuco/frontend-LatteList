@@ -2,13 +2,14 @@ import { Injectable, signal } from '@angular/core';
 import List from '../model/List';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ListService {
   
-  private apiUrl = 'http://localhost:8080/listas'; 
+  private apiUrl = `${environment.apiUrl}/listas`; 
 
   userLists = signal<List[]>([]);
   publicLists = signal<List[]>([]);

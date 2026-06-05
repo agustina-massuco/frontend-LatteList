@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import User, { EstadoUsuario } from '../model/User';
+import { environment } from '../../../environments/environment';
 
 
 
@@ -10,8 +11,8 @@ import User, { EstadoUsuario } from '../model/User';
 })
 export class UserService {
 
-  private readonly authUrl = 'http://localhost:8080/auth';
-  private readonly userUrl = 'http://localhost:8080/usuarios';
+  private readonly authUrl = `${environment.apiUrl}/auth`;
+  private readonly userUrl = `${environment.apiUrl}/usuarios`;
 
   users = signal<User[]>([]);
 

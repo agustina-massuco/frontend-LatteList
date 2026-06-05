@@ -1,13 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import {Injectable } from '@angular/core';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 import CafeModel from '../model/CafeModel';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CafeService {
-  private apiUrl = 'http://localhost:8080/cafes';
+  private apiUrl = `${environment.apiUrl}/cafes`;
  constructor(private http: HttpClient) { }
  
     getCafes(filtros: any): Observable<any[]> {
