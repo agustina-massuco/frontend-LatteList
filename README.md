@@ -7,7 +7,7 @@
 
 Interfaz de usuario para **LatteList**, una Single Page Application (SPA) reactiva y moderna diseñada para la comunidad cafetera de Mar del Plata.
 
-
+**Demo en vivo:** [https://latte-list.vercel.app](https://latte-list.vercel.app)
 
 ## Características Destacadas
 * **Mapa Interactivo:** Integración con MapLibre GL para geolocalización de cafés.
