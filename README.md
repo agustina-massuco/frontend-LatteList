@@ -99,7 +99,6 @@ El acceso está protegido mediante lógica avanzada en el cliente:
 npm install
 ng serve
 
-Aplicación disponible en http://localhost:4200
 
 ```
 ##  Licencia

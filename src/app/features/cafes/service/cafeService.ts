@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import {Injectable } from '@angular/core';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 import CafeModel from '../model/CafeModel';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

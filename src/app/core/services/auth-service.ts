@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import LoginResponseJava from '../model/LoginResponseJava';
 import User from '../../features/users/model/User';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import User, { EstadoUsuario } from '../model/User';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 
 
